@@ -14,6 +14,7 @@ import 'package:graduationproject/themes.dart';
 import 'package:graduationproject/category_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'forgot_password.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,13 +57,16 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: _themeManager.themeMode,
-      home: AuthScreen(),
+      home: NavigationBarController(),
       routes: {
         'Login': (context) => AuthScreen(),
         'Register': (context) => RegisterScreen(),
         'Home': (context) => NavigationBarController(),
         'test 2':  (context) => test2(),
         'test':  (context) => test(),
+        'ForgotPassword' : (context) => ForgotPassword(),
+        'Verification' :  (context) => Verification(),
+        'NewPassword' :  (context) => NewPassword(), 
       },
     ), );
   }

@@ -2,19 +2,46 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:graduationproject/auth_form.dart';
+import 'package:graduationproject/home_screen.dart';
+import 'package:graduationproject/navigationbar_controller_screen.dart';
 import 'package:graduationproject/original_button.dart';
 import 'package:graduationproject/register_screen.dart';
+import 'package:graduationproject/transition_animation.dart';
 import 'package:rive/rive.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:email_auth/utils/constants/firebase_constants.dart';
+//import 'package:email_auth/views/auth/email_verification_page.dart';
+import 'firebase_constant.dart';
+//import 'verification.dart';
+import 'forgot_password.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class AuthScreen extends StatefulWidget {
+  final user = FirebaseAuth.instance;
   @override
   State<AuthScreen> createState() => AuthScreenState();
 }
 
 class AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool isShowLoading = false;
+  late SMITrigger error;
+  late SMITrigger check;
+  late SMITrigger reset;
+  StateMachineController getRiveController(Artboard artboard) {
+    StateMachineController? controller =
+        StateMachineController.fromArtboard(artboard, 'State Machine 1');
+
+    artboard.addController(controller!);
+    return controller;
+  }
+
+
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   bool showPassword = false;
+  
   String _email = '', _password = '';
 
   late RiveAnimationController btnAnimationController;
@@ -71,6 +98,8 @@ class AuthScreenState extends State<AuthScreen> {
                     Future.delayed(
                       const Duration(milliseconds: 750),
                       () {
+                        _passwordController.text = '';
+                        _emailController.text = '';
                         showGeneralDialog(
                         transitionDuration: const Duration(milliseconds: 500),
                         context: context,
@@ -141,6 +170,7 @@ class AuthScreenState extends State<AuthScreen> {
                                                               height: 10,
                                                             ),
                                                             TextFormField(
+                                                              controller: _emailController,
                                                               onChanged: (value) =>
                                                                   _email = value,
                                                               validator: (value) {
@@ -153,9 +183,9 @@ class AuthScreenState extends State<AuthScreen> {
                                                                     .hasMatch(
                                                                         value)) {
                                                                   return "Please enter a valid email";
-                                                                }
+                                                                } else {
                                                                 return null;
-                                                              },
+                                                              }},
                                                               decoration:
                                                                   const InputDecoration(
                                                                 labelText:
@@ -171,6 +201,7 @@ class AuthScreenState extends State<AuthScreen> {
                                                               height: 12,
                                                             ),
                                                             TextFormField(
+                                                              
                                                               controller:
                                                                   _passwordController,
                                                               obscureText:
@@ -179,10 +210,13 @@ class AuthScreenState extends State<AuthScreen> {
                                                                       : true,
                                                               onChanged: (value) =>
                                                                   _password = value,
-                                                              validator: (value) =>
-                                                                  value!.length <= 6
-                                                                      ? 'Your password must be larger than 6 characters'
-                                                                      : null,
+                                                              validator: (value) {
+                                                                  if (value!.isEmpty) {
+                                                                     return "Please enter your password"; }
+                                                                      else {
+                                                                  return null;
+                                                                }
+                                                              },
                                                               decoration:
                                                                   InputDecoration(
                                                                 labelText:
@@ -208,7 +242,9 @@ class AuthScreenState extends State<AuthScreen> {
                                                               ),
                                                             ),
                                                             TextButton(
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                 Navigator.of(context).pushReplacement(SlideRightAnimationRoute(Page: const ForgotPassword()));
+                                                              },
                                                               child: Text(
                                                                   "Forgot password?",
                                                                   style: Theme.of(
@@ -227,14 +263,216 @@ class AuthScreenState extends State<AuthScreen> {
                                                                       context)
                                                                   .backgroundColor,
                                                               onPressed: () {
-                                                                if (_formKey
-                                                                    .currentState!
-                                                                    .validate()) {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pushNamed(
-                                                                          'Home');
-                                                                }
+                                                                setState(() {
+                                                                  isShowLoading =
+                                                                      true;
+                                                                });
+                                                                Future.delayed(
+                                                                  const Duration(
+                                                                      seconds:
+                                                                          1),
+                                                                  () async {
+                                                                    if (_formKey
+                                                                        .currentState!
+                                                                        .validate()) {
+                                                                  try {
+                                                                        UserCredential
+                                                                            userCredential =
+                                                                            await FirebaseAuth.instance.signInWithEmailAndPassword(
+                                                                                email: _email,
+                                                                                password: _password);
+
+                                                                        
+
+                                                                        Future
+                                                                            .delayed(
+                                                                          const Duration(
+                                                                              seconds: 2),
+                                                                          () async {
+                                                                            setState(() {
+                                                                              isShowLoading = false;
+                                                                            });
+
+                                                                              if (userCredential.user!.emailVerified) {
+                                                                                 AwesomeDialog(
+                                                                                  autoHide: const Duration(milliseconds: 1500),
+                                                                            context: context,
+                                                                            animType: AnimType.scale,
+                                                                            dialogType: DialogType.success,
+                                                                            body: Center(child: Container(
+                                                                              margin: const EdgeInsets.only(bottom: 15),
+                                                                              child: const Text("Login Success!",
+                                                                                    style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),
+                                                                                  ),
+                                                                            ),),
+                                                                            title: 'This is Ignored',
+                                                                            //btnOkOnPress: () {},
+                                                                            //btnOkColor: const Color.fromRGBO(198, 48, 48, 1)
+                                                                            ).show();
+                                                                            await Future
+                                                                              .delayed(
+                                                                            const Duration(seconds: 2),
+                                                                            () {
+                                                                              setState(() {
+                                                                                isShowLoading = false;
+                                                                              });
+                                                                            },
+                                                                          );
+                                                                          Navigator.of(context).pushReplacement(SlideRightAnimationRoute(Page: NavigationBarController()));
+                                                                              }
+                                                                              else {
+                                                                                _passwordController.text = '';
+                                                                                _emailController.text = '';
+                                                  AwesomeDialog(
+                                                              context: context,
+                                                              animType: AnimType.scale,
+                                                              dialogType: DialogType.error,
+                                                              body: Center(child: Container(
+                                                                margin: const EdgeInsets.symmetric(horizontal: 10),
+                                                                child: const Text("Email is not verified! Please check your Inbox...",
+                                                                      style: TextStyle(fontSize: 18),
+                                                                    ),
+                                                              ),),
+                                                              title: 'This is Ignored',
+                                                              btnOkOnPress: () {},
+                                                              btnOkColor: const Color.fromRGBO(198, 48, 48, 1)
+                                                              ).show();
+                                                                              }
+
+
+                                                                          },
+                                                                        );
+                                                                      } 
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      on FirebaseAuthException catch (e) {
+                                                                        if (e.code ==
+                                                                            'user-not-found') {
+                                                                          //ScaffoldMessenger.of(context)
+                                                                          // .showSnackBar(SnackBar(
+                                                                          // content:
+                                                                          //   Text('No user Found with this Email'),
+                                                                          //  ));
+                                                                          _passwordController.text = '';
+                                                                          _emailController.text = '';
+                                                                          AwesomeDialog(
+                                                                            context: context,
+                                                                            animType: AnimType.scale,
+                                                                            dialogType: DialogType.error,
+                                                                            body: Center(child: Container(
+                                                                              margin: const EdgeInsets.symmetric(horizontal: 10),
+                                                                              child: const Text("No user with this Email!",
+                                                                                    style: TextStyle(fontSize: 18),
+                                                                                  ),
+                                                                            ),),
+                                                                            title: 'This is Ignored',
+                                                                            btnOkOnPress: () {},
+                                                                            btnOkColor: const Color.fromRGBO(198, 48, 48, 1)
+                                                                            ).show();
+                                                                            Future
+                                                                              .delayed(
+                                                                           const Duration(seconds: 2),
+                                                                            () {
+                                                                              setState(() {
+                                                                                isShowLoading = false;
+                                                                              });
+                                                                            },
+                                                                          );
+                                                                        } else if (e.code ==
+                                                                            'wrong-password') {
+                                                                          //  ScaffoldMessenger.of(context)
+                                                                          //.showSnackBar(SnackBar(
+                                                                          //content:
+                                                                          // Text('Wrong Password'),
+                                                                          //  ));
+                                                                          _passwordController.text = '';
+                                                                          _emailController.text = '';
+                                                                           AwesomeDialog(
+                                                                            context: context,
+                                                                            animType: AnimType.scale,
+                                                                            dialogType: DialogType.error,
+                                                                            body: Center(child: Container(
+                                                                              margin: const EdgeInsets.symmetric(horizontal: 10),
+                                                                              child: const Text("Wrong Password!",
+                                                                                    style: TextStyle(fontSize: 18),
+                                                                                  ),
+                                                                            ),),
+                                                                            title: 'This is Ignored',
+                                                                            btnOkOnPress: () {},
+                                                                            btnOkColor: const Color.fromRGBO(198, 48, 48, 1)
+                                                                            ).show();
+                                                                            Future
+                                                                              .delayed(
+                                                                            const Duration(seconds: 2),
+                                                                            () {
+                                                                              setState(() {
+                                                                                isShowLoading = false;
+                                                                              });
+                                                                            },
+                                                                          );
+                                                                        }
+                                                                      }
+
+                                                                      //check
+                                                                      // .fire();
+                                                                      //// Future
+                                                                      // .delayed(
+                                                                      //Duration(
+                                                                      //   seconds:
+                                                                      //       2),
+                                                                      // () {
+                                                                      //   setState(
+                                                                      //      () {
+                                                                      //   isShowLoading =
+                                                                      //     false;
+                                                                      // });
+                                                                      // },
+                                                                      //);
+
+                                                                      
+                                                                    } 
+                                                                    
+                                                                    
+                                                                    
+                                                                    else {
+                                                                      error
+                                                                          .fire();
+                                                                      Future
+                                                                          .delayed(
+                                                                        const Duration(
+                                                                            seconds:
+                                                                                2),
+                                                                        () {
+                                                                          setState(
+                                                                              () {
+                                                                            isShowLoading =
+                                                                                false;
+                                                                          });
+                                                                        },
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                );
+                                                               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                                               },
                                                             ),
                                                           ],
@@ -260,7 +498,33 @@ class AuthScreenState extends State<AuthScreen> {
                                       Icons.close,
                                       color: Theme.of(context).iconTheme.color,
                                     ),)
-                                  ))
+                                  )),
+isShowLoading
+                                            ? CustomPosintioned(
+                                                child: RiveAnimation.asset(
+                                                  "assets/rive/checkerror.riv",
+                                                  onInit: (artboard) {
+                                                    StateMachineController
+                                                        controller =
+                                                        getRiveController(
+                                                            artboard);
+                                                    check = controller.findSMI(
+                                                        "Check") as SMITrigger;
+                                                    error = controller.findSMI(
+                                                        "Error") as SMITrigger;
+                                                    reset = controller.findSMI(
+                                                        "Reset") as SMITrigger;
+                                                  },
+                                                ),
+                                              )
+                                            : SizedBox(),
+
+
+
+
+
+
+
                                       ],
                                     );
                                     },)),
@@ -337,6 +601,30 @@ class AuthScreenState extends State<AuthScreen> {
               ],
             ),
           ))
+        ],
+      ),
+    );
+  }
+}
+class CustomPosintioned extends StatelessWidget {
+  const CustomPosintioned({super.key, required this.child, this.size = 100});
+  final Widget child;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: Column(
+        children: [
+          Spacer(),
+          SizedBox(
+            height: size,
+            width: size,
+            child: child,
+          ),
+          Spacer(
+            flex: 1,
+          ),
         ],
       ),
     );

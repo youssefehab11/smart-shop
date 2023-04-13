@@ -1,16 +1,27 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/auth_screen.dart';
+import 'package:graduationproject/transition_animation.dart';
 import 'original_button.dart';
 import 'package:graduationproject/theme_manager';
 import 'package:graduationproject/themes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+//import 'verification.dart';
+import'firebase_constant.dart';
+//import 'package:email_auth/email_auth.dart';
+import 'dart:async';
 
 class RegisterScreen extends StatefulWidget {
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
+
 class _RegisterScreenState extends State<RegisterScreen> {
   final ThemeManager _themeManager = ThemeManager();
+  final user = FirebaseAuth.instance.currentUser;
+  final credential = FirebaseAuth.instance;
+
   var SelectedDay;
   var SelectedMonth;
   var SelectedYear;
@@ -18,6 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _email = '', _password = '';
   final TextEditingController _passwordController = TextEditingController();
   bool showPassword = false;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -376,10 +388,102 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           textColor: Colors.white,
                                           bgColor:
                                               Theme.of(context).backgroundColor,
-                                          onPressed: () {
+                                          onPressed: ()  async {
                                             if (_formKey.currentState!.validate()) {
-                                              print(_email);
-                                              print(_password);
+                                              
+// Navigator.of(context).pushNamed('verification');
+                                        
+                                              
+                                                try {
+                                                final credential =
+                                                    await FirebaseAuth
+                                                        .instance
+                                                        .createUserWithEmailAndPassword(
+                                                          
+                                                            email: _email.trim(),
+                                                            password:
+                                                                _password.trim());
+                                                               await AwesomeDialog(
+                                                                                  autoHide: const Duration(milliseconds: 3200),
+                                                                            context: context,
+                                                                            animType: AnimType.scale,
+                                                                            dialogType: DialogType.infoReverse,
+                                                                            body: Center(child: Container(
+                                                                              margin: const EdgeInsets.only(bottom: 15),
+                                                                              child: const Text("Please check your Email to verfiy your account",
+                                                                                    style: TextStyle(fontSize: 18),
+                                                                                  ),
+                                                                            ),),
+                                                                            title: 'This is Ignored',
+                                                                            //btnOkOnPress: () {},
+                                                                            //btnOkColor: const Color.fromRGBO(198, 48, 48, 1)
+                                                                            ).show();
+                                                          credential.user!.sendEmailVerification();
+                                                          Navigator.of(context).pop(ScaleAnimationRoute(Page: AuthScreen()));
+  //print (credential.user!.emailVerified);
+                                              } 
+                                            
+                                              
+                                              on FirebaseAuthException catch (e) {
+                                                if (e.code == 'weak-password') {
+                                                  print(
+                                                      'The password provided is too weak.');
+                                                } else if (e.code ==
+                                                    'email-already-in-use') {
+                                                  print(
+                                                      'The account already exists for that email.');
+                                                      
+                                                }
+                                                return null;
+
+                                                /*isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+  
+  if (!isEmailVerified ) {
+     
+    sendVerificationEmail();
+
+
+  }
+  Future sendVerificationEmail() async {
+try {
+final user = FirebaseAuth.instance.currentUser!; 
+await user.sendEmailVerification();
+}
+ catch (e) {
+  Utils.showSnackBar(e.toString());
+ }
+
+  }
+                  
+     */
+                                              } catch (e) {
+                                                print(e);
+                                                return null;
+                                              }
+                                              
+
+
+
+
+                                              
+
+
+
+
+
+
+
+
+
+
+
+                                              
+
+
+
+
+
+
                                             }
                                           },
                                         ),

@@ -63,7 +63,7 @@ class HomePageState extends State<HomePage> {
                   width: 50,
                   child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(AnimationRoute(Page: ShoppingList()));
+                        Navigator.of(context).push(ScaleAnimationRoute(Page: ShoppingList()));
                       },
                       child: const Icon(
                         Icons.list_alt_rounded,
