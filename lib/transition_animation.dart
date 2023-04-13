@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:graduationproject/shopping_list.dart';
-
 class ScaleAnimationRoute extends PageRouteBuilder {
   final Page;
   ScaleAnimationRoute({this.Page})
@@ -25,6 +23,22 @@ class SlideRightAnimationRoute extends PageRouteBuilder {
             transitionDuration: const Duration(milliseconds: 500),
             transitionsBuilder: (context, animation, animationtwo, child) {
               var begin = const Offset(1.0 , 0.0);
+              var end = const Offset(0.0 , 0.0);
+              var curvesAnimation =
+                  CurvedAnimation(parent: animation, curve: Curves.easeIn);
+              var tween = Tween(begin: begin, end: end);
+              return SlideTransition(
+                  position: tween.animate(curvesAnimation), child: child);
+            });
+}
+class SlideDownAnimationRoute extends PageRouteBuilder {
+  final Page;
+  SlideDownAnimationRoute({this.Page})
+      : super(
+            pageBuilder: (context, animation, secondaryAnimation) => Page,
+            transitionDuration: const Duration(milliseconds: 500),
+            transitionsBuilder: (context, animation, animationtwo, child) {
+              var begin = const Offset(0.0 , 1.0);
               var end = const Offset(0.0 , 0.0);
               var curvesAnimation =
                   CurvedAnimation(parent: animation, curve: Curves.easeIn);
