@@ -15,9 +15,9 @@ class ScaleAnimationRoute extends PageRouteBuilder {
                   scale: tween.animate(curvesAnimation), child: child);
             });
 }
-class SlideRightAnimationRoute extends PageRouteBuilder {
+class SlideLeftAnimationRoute extends PageRouteBuilder {
   final Page;
-  SlideRightAnimationRoute({this.Page})
+  SlideLeftAnimationRoute({this.Page})
       : super(
             pageBuilder: (context, animation, secondaryAnimation) => Page,
             transitionDuration: const Duration(milliseconds: 500),

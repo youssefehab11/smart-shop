@@ -1,6 +1,9 @@
+
 import 'package:flutter/material.dart';
+import 'package:graduationproject/category_items.dart';
 import 'package:graduationproject/theme_manager';
 import 'package:graduationproject/themes.dart';
+import 'package:graduationproject/transition_animation.dart';
 
 ThemeManager _themeManager = ThemeManager();
 
@@ -12,8 +15,70 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class CategoryScreenState extends State<CategoryScreen> {
-  List<Widget> tabBarScreens = [
-    //Oil & Masalas
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text(
+            "Categories",
+            style: TextStyle(color: Colors.white, fontSize: 25,fontFamily: "Poppins",fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          //elevation: 0.0,
+        ),
+        body: DefaultTabController(
+          initialIndex: 0,
+          animationDuration: const Duration(microseconds: 1),
+          length: 7,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 100,
+                height: double.infinity,
+                child: RotatedBox(
+                  quarterTurns: 1,
+                  child: TabBar(
+                    indicatorColor: const Color.fromRGBO(198, 48, 48, 1),
+                    tabs: [
+                    RotatedBox(
+                        quarterTurns: 3,
+                        child: Column(
+                          children: [
+                            SizedBox(child:Row(mainAxisAlignment: MainAxisAlignment.center)),
+                            const Text("Oil &",style: TextStyle(fontFamily: "Poppins",fontSize: 16)), const Text("Masalas",style: TextStyle(fontFamily: "Poppins",fontSize: 16))
+                          ],
+                        )),
+                    RotatedBox(
+                        quarterTurns: 3,
+                        child: Column(
+                          children: [
+                            SizedBox(child:Row(mainAxisAlignment: MainAxisAlignment.center)),
+                            const Text("Eggs, Meat,",style: TextStyle(fontFamily: "Poppins",fontSize: 16)), const Text("& Fish",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],
+                        )),
+                    RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Beverages",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],)),
+                    RotatedBox(
+                        quarterTurns: 3,
+                        child: Column(
+                          children:[SizedBox(child:Row(mainAxisAlignment: MainAxisAlignment.center)),const Text("Fruits &",style: TextStyle(fontFamily: "Poppins",fontSize: 16)), const Text("Veggies",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],
+                        )),
+                        RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Bakery",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],)),
+                        RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Snacks",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],)),
+                        RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Food Grains",style: TextStyle(fontFamily: "Poppins",fontSize: 16),)],)),
+                  ]),
+                ),
+              ),
+              Container(
+                width: 2,
+                height: double.infinity,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              Expanded(
+                child: SizedBox(
+                    height: double.infinity,
+                    child: TabBarView(children: [
+                          //Oil & Masalas
     Container(
       margin: const EdgeInsets.only(top: 10),
       child: Row(
@@ -34,7 +99,7 @@ class CategoryScreenState extends State<CategoryScreen> {
                         borderRadius: BorderRadius.circular(20),
                         child: InkWell(
                           onTap: () {
-                            //Go to Masalas items
+                            Navigator.of(context).push(SlideLeftAnimationRoute(Page: SubCategoryItems()));
                           },
                           child: Image.asset('assets/images/Masalas.jpg',fit: BoxFit.cover,)),
                       )
@@ -607,78 +672,6 @@ class CategoryScreenState extends State<CategoryScreen> {
         ],
       ) ,
     ),
-
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Text(
-            "Categories",
-            style: TextStyle(color: Colors.white, fontSize: 25,fontFamily: "Poppins",fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          //elevation: 0.0,
-        ),
-        body: DefaultTabController(
-          initialIndex: 0,
-          animationDuration: const Duration(microseconds: 1),
-          length: 7,
-          child: Row(
-            children: [
-              SizedBox(
-                width: 100,
-                height: double.infinity,
-                child: RotatedBox(
-                  quarterTurns: 1,
-                  child: TabBar(
-                    indicatorColor: const Color.fromRGBO(198, 48, 48, 1),
-                    tabs: [
-                    RotatedBox(
-                        quarterTurns: 3,
-                        child: Column(
-                          children: [
-                            SizedBox(child:Row(mainAxisAlignment: MainAxisAlignment.center)),
-                            const Text("Oil &",style: TextStyle(fontFamily: "Poppins",fontSize: 16)), const Text("Masalas",style: TextStyle(fontFamily: "Poppins",fontSize: 16))
-                          ],
-                        )),
-                    RotatedBox(
-                        quarterTurns: 3,
-                        child: Column(
-                          children: [
-                            SizedBox(child:Row(mainAxisAlignment: MainAxisAlignment.center)),
-                            const Text("Eggs, Meat,",style: TextStyle(fontFamily: "Poppins",fontSize: 16)), const Text("& Fish",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],
-                        )),
-                    RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Beverages",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],)),
-                    RotatedBox(
-                        quarterTurns: 3,
-                        child: Column(
-                          children:[SizedBox(child:Row(mainAxisAlignment: MainAxisAlignment.center)),const Text("Fruits &",style: TextStyle(fontFamily: "Poppins",fontSize: 16)), const Text("Veggies",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],
-                        )),
-                        RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Bakery",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],)),
-                        RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Snacks",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],)),
-                        RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Food Grains",style: TextStyle(fontFamily: "Poppins",fontSize: 16),)],)),
-                  ]),
-                ),
-              ),
-              Container(
-                width: 2,
-                height: double.infinity,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              Expanded(
-                child: SizedBox(
-                    height: double.infinity,
-                    child: TabBarView(children: [
-                      tabBarScreens.elementAt(0),
-                      tabBarScreens.elementAt(1),
-                      tabBarScreens.elementAt(2),
-                      tabBarScreens.elementAt(3),
-                      tabBarScreens.elementAt(4),
-                      tabBarScreens.elementAt(5),
-                      tabBarScreens.elementAt(6),
                     ])),
               )
             ],

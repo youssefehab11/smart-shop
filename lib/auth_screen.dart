@@ -243,7 +243,7 @@ class AuthScreenState extends State<AuthScreen> {
                                                             ),
                                                             TextButton(
                                                               onPressed: () {
-                                                                 Navigator.of(context).pushReplacement(SlideRightAnimationRoute(Page: const ForgotPassword()));
+                                                                 Navigator.of(context).pushReplacement(SlideLeftAnimationRoute(Page: const ForgotPassword()));
                                                               },
                                                               child: Text(
                                                                   "Forgot password?",
@@ -318,7 +318,7 @@ class AuthScreenState extends State<AuthScreen> {
                                                                               });
                                                                             },
                                                                           );
-                                                                          Navigator.of(context).pushReplacement(SlideRightAnimationRoute(Page: NavigationBarController()));
+                                                                          Navigator.of(context).pushReplacement(SlideLeftAnimationRoute(Page: NavigationBarController()));
                                                                               }
                                                                               else {
                                                                                 _passwordController.text = '';
