@@ -1,681 +1,244 @@
-
+import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/subcategory_items.dart';
-import 'package:graduationproject/theme_manager';
-import 'package:graduationproject/themes.dart';
 import 'package:graduationproject/transition_animation.dart';
-
-ThemeManager _themeManager = ThemeManager();
+import 'package:lottie/lottie.dart';
 
 class CategoryScreen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    return CategoryScreenState();
-  }
+  State<CategoryScreen> createState() => CategoryScreenState();
 }
 
+List categories = [
+  "Oil & Masala",
+  "Eggs, Meat & Fish",
+  "Beverages",
+  "Fruits & Veggies",
+  "Bakery",
+  "Snacks",
+  "Food Grains"
+];
+String subCategory = "";
+
+
 class CategoryScreenState extends State<CategoryScreen> {
+  loadingSubCategories() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AnimatedSplashScreen(
+            disableNavigation: true,
+            splashIconSize: 150,
+            backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+            splash:
+                Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+            animationDuration: const Duration(seconds: 1),
+            nextScreen: CategoryScreen());
+      },
+    );
+  }
+
+  void loadingItems() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AnimatedSplashScreen(
+            disableNavigation: true,
+            splashIconSize: 150,
+            backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+            splash:
+                Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+            animationDuration: const Duration(seconds: 1),
+            nextScreen: CategoryScreen());
+      },
+    );
+    Future.delayed(
+      const Duration(milliseconds: 3000),
+      () {
+        Navigator.pop(context);
+        Navigator.of(context)
+            .push(SlideLeftAnimationRoute(Page: SubCategoryItems()));
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Text(
-            "Categories",
-            style: TextStyle(color: Colors.white, fontSize: 25,fontFamily: "Poppins",fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          //elevation: 0.0,
+    final provider = ProviderController.of(context);
+    
+    CollectionReference collectionReference = FirebaseFirestore.instance
+        .collection("Categories")
+        .doc(provider.categoryId)
+        .collection("SubCategories");
+
+    Widget pageView() {
+      return Expanded(
+          child: Container(
+        color: Theme.of(context).colorScheme.onPrimary,
+        height: double.infinity,
+        child: FutureBuilder(
+          future: collectionReference.get(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return GridView.builder(
+                physics: const BouncingScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, mainAxisExtent: 190),
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                            height: 150,
+                            width: 150,
+                            decoration: BoxDecoration(
+                                //border: Border.all(color: Colors.grey,width: 2),
+
+                                borderRadius: BorderRadius.circular(20),
+                                color: Theme.of(context).colorScheme.onPrimary),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      provider.subCategoryTitle = snapshot
+                                          .data?.docs[index]["SubCategoryName"];
+                                      subCategory = snapshot.data?.docs[index]
+                                          ["SubCategoryName"];
+                                      provider.getSubCategoryId(subCategory);
+                                    });
+                                    loadingItems();
+                                    Future.delayed(Duration(seconds: 3),() {
+                                      provider.usedItems = provider.items;
+                                    },);
+                                    
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/${snapshot.data?.docs[index]["Image"]}',
+                                    fit: BoxFit.cover,
+                                  )),
+                            )),
+                      ),
+                      Text(snapshot.data?.docs[index]["SubCategoryName"]),
+                    ],
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return const Text("Error");
+            } else {
+              return const Text("Loading");
+            }
+          },
         ),
-        body: DefaultTabController(
-          initialIndex: 0,
-          animationDuration: const Duration(microseconds: 1),
-          length: 7,
-          child: Row(
-            children: [
-              SizedBox(
-                width: 100,
-                height: double.infinity,
-                child: RotatedBox(
-                  quarterTurns: 1,
-                  child: TabBar(
-                    indicatorColor: const Color.fromRGBO(198, 48, 48, 1),
-                    tabs: [
-                    RotatedBox(
-                        quarterTurns: 3,
-                        child: Column(
-                          children: [
-                            SizedBox(child:Row(mainAxisAlignment: MainAxisAlignment.center)),
-                            const Text("Oil &",style: TextStyle(fontFamily: "Poppins",fontSize: 16)), const Text("Masalas",style: TextStyle(fontFamily: "Poppins",fontSize: 16))
-                          ],
-                        )),
-                    RotatedBox(
-                        quarterTurns: 3,
-                        child: Column(
-                          children: [
-                            SizedBox(child:Row(mainAxisAlignment: MainAxisAlignment.center)),
-                            const Text("Eggs, Meat,",style: TextStyle(fontFamily: "Poppins",fontSize: 16)), const Text("& Fish",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],
-                        )),
-                    RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Beverages",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],)),
-                    RotatedBox(
-                        quarterTurns: 3,
-                        child: Column(
-                          children:[SizedBox(child:Row(mainAxisAlignment: MainAxisAlignment.center)),const Text("Fruits &",style: TextStyle(fontFamily: "Poppins",fontSize: 16)), const Text("Veggies",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],
-                        )),
-                        RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Bakery",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],)),
-                        RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Snacks",style: TextStyle(fontFamily: "Poppins",fontSize: 16))],)),
-                        RotatedBox(quarterTurns: 3, child: Row(mainAxisAlignment: MainAxisAlignment.center,children:const [Text("Food Grains",style: TextStyle(fontFamily: "Poppins",fontSize: 16),)],)),
-                  ]),
-                ),
-              ),
-              Container(
-                width: 2,
-                height: double.infinity,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              Expanded(
-                child: SizedBox(
-                    height: double.infinity,
-                    child: TabBarView(children: [
-                          //Oil & Masalas
-    Container(
-      margin: const EdgeInsets.only(top: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      ));
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text(
+          "Categories",
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 25,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        //elevation: 0.0,
+      ),
+      body: Row(
         children: [
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                    //border: Border.all(color: Colors.grey,width: 2),
-                    
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(SlideLeftAnimationRoute(Page: SubCategoryItems()));
-                          },
-                          child: Image.asset('assets/images/Masalas.jpg',fit: BoxFit.cover,)),
-                      )
-                ),
+          Container(
+              //margin: EdgeInsets.symmetric(vertical: 5),
+              width: MediaQuery.of(context).size.width-292,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                //borderRadius:BorderRadius.only(topRight:Radius.circular(20),bottomRight:Radius.circular(20)) ,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Masalas"),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Spices items
-                          },
-                          child: Image.asset('assets/images/Spices.jpg',fit: BoxFit.cover,)),
+              child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    for (int i = 0; i < 7; i++) {
+                      provider.selectedCategoryBackGroundColor.add(false);
+                    }
+                    for (int i = 0; i < 7; i++) {
+                      provider.selectedCategoryLableColor.add(false);
+                    }
+                    return SizedBox(
+                      height: 80,
+                      child: InkWell(
+                        onTap: () {
+                          provider.getCategoryId(categories[index]);
+                          loadingSubCategories();
+                          Future.delayed(
+                            const Duration(seconds: 3),
+                            () {
+                              Navigator.pop(context);
+                              setState(() {
+                                provider.selectedCategoryBackGroundColor
+                                    .clear();
+                                for (int i = 0; i < 7; i++) {
+                                  provider.selectedCategoryBackGroundColor
+                                      .add(false);
+                                }
+                                provider.selectedCategoryBackGroundColor[
+                                        index] =
+                                    !provider
+                                        .selectedCategoryBackGroundColor[index];
+                                provider.selectedCategoryLableColor.clear();
+                                for (int i = 0; i < 7; i++) {
+                                  provider.selectedCategoryLableColor
+                                      .add(false);
+                                }
+                                provider.selectedCategoryLableColor[index] =
+                                    !provider.selectedCategoryLableColor[index];
+                                //selectedIndex = 0;
+                              });
+                            },
+                          );
+                        },
+                        child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(30),
+                                  bottomRight: Radius.circular(30)),
+                              color: provider.selectedCategoryBackGroundColor[
+                                          index] ==
+                                      false
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : const Color.fromRGBO(198, 48, 48, 1),
+                            ),
+                            padding: const EdgeInsets.only(
+                                top: 10, right: 5, left: 8),
+                            // margin: EdgeInsets.only(top: 10),
+                            child: Text(categories[index],
+                                style: TextStyle(
+                                    fontFamily: "Poppins",
+                                    fontSize: 16,
+                                    color: provider.selectedCategoryLableColor[
+                                                index] ==
+                                            false
+                                        ? Colors.black87
+                                        : Colors.white))),
                       ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Spices"),
-              ),
-            ],
+                    );
+                  })),
+          Container(
+            width: 2,
+            height: double.infinity,
+            color: Theme.of(context).colorScheme.primary,
           ),
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Oil & Ghee items
-                          },
-                          child: Image.asset('assets/images/Oil&Ghee.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Center(
-                child: Column(
-                  children: const [
-                    Center(child: Text("Edibe Oil")),
-                    Center(child: Text("& Ghee"))
-                  ],
-                ),
-              )
-            ],
-          ),
+          pageView()
         ],
       ),
-    ),
-
-    //Eggs, Meat & Fish
-    Container(
-      margin: const EdgeInsets.only(top: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Meat items
-                          },
-                          child: Image.asset('assets/images/Meat.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Mutton"),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Fish items
-                          },
-                          child: Image.asset('assets/images/Fish.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Fish"),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Eggs items
-                          },
-                          child: Image.asset('assets/images/Eggs.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Eggs"),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to chiken items
-                          },
-                          child: Image.asset('assets/images/Chicken.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Chicken"),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-
-    // Beverages
-    Container(
-      margin: const EdgeInsets.only(top: 10),
-      child:Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Health drinks items
-                          },
-                          child: Image.asset('assets/images/Healthy drinks.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Health Drinks"),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Soft drinks items
-                          },
-                          child: Image.asset('assets/images/Soft drinks.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Soft Drinks"),
-              ),
-            ],
-          ),
-        ],
-      ) ,
-    ),
-
-    //Fruits & Veggies
-    Container(
-      margin: const EdgeInsets.only(top: 10),
-      child:Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Fresh fruits items
-                          },
-                          child: Image.asset('assets/images/Fruits.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Center(child: Text("Fresh Fruits"),)
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Fresh vegetables items
-                          },
-                          child: Image.asset('assets/images/Vegetables.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Center(
-                child: Column(
-                  children: const [
-                    Text("Fresh"),
-                    Text("vegetables"),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ) ,
-    ),
-  
-    //Bakery
-    Container(
-      margin: const EdgeInsets.only(top: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Cakes items
-                          },
-                          child: Image.asset('assets/images/Cakes.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Cakes"),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Biscuits items
-                          },
-                          child: Image.asset('assets/images/Biscuits.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Biscuits"),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Bread & buns items
-                          },
-                          child: Image.asset('assets/images/Bread.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Center(
-                child: Column(
-                  children: const [
-                    Center(child: Text("Bread")),
-                    Center(child: Text("& buns"))
-                  ],
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
-    ),
-  
-    //Snacks
-     Container(
-      margin: const EdgeInsets.only(top: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Cookies items
-                          },
-                          child: Image.asset('assets/images/Cookies.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Cookies"),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Chocolates items
-                          },
-                          child: Image.asset('assets/images/Chocolates.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Chocolate"),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Noodles items
-                          },
-                          child: Image.asset('assets/images/Noodles.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Noodles"),
-                ),
-            ],
-          ),
-        ],
-      ),
-    ),
-
-    //Food Grains
-    Container(
-      margin: const EdgeInsets.only(top: 10),
-      child:Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Flour items
-                          },
-                          child: Image.asset('assets/images/Flour.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Atta & Flour"),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 115,
-                  width: 115,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () {
-                            //Go to Rice items
-                          },
-                          child: Image.asset('assets/images/Rice.jpg',fit: BoxFit.cover,)),
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Center(
-                child: Text("Rice"),
-              ),
-            ],
-          ),
-        ],
-      ) ,
-    ),
-                    ])),
-              )
-            ],
-          ),
-        ));
+    );
   }
 }

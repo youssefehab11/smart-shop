@@ -4,6 +4,7 @@ import 'package:graduationproject/home_screen.dart';
 import 'package:graduationproject/navigationbar_controller_screen.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/register_screen.dart';
+import 'package:graduationproject/subcategory_items.dart';
 import 'package:graduationproject/test.dart';
 import 'package:graduationproject/test0.dart';
 import 'package:graduationproject/test2.dart';
@@ -62,7 +63,7 @@ class _MyAppState extends State<MyApp> {
         'Login': (context) => AuthScreen(),
         'Register': (context) => RegisterScreen(),
         'Home': (context) => NavigationBarController(),
-        'test 2':  (context) => test2(),
+        //'test 2':  (context) => test2(),
         'test':  (context) => test(),
         'ForgotPassword' : (context) => ForgotPassword(),
         'Verification' :  (context) => Verification(),

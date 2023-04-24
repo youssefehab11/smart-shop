@@ -95,7 +95,7 @@ class ShoppingListState extends State<ShoppingList> {
             children: [
             Container(
               margin: const EdgeInsets.all(10),
-              width: 200,
+              width: MediaQuery.of(context).size.width-200,
               height: 80,
               child: Form(
                 child: TextFormField(

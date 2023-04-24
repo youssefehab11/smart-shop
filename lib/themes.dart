@@ -37,7 +37,7 @@ ThemeData lightTheme = ThemeData(
         hintColor: Colors.black,
         brightness: Brightness.light,
         appBarTheme: const AppBarTheme(backgroundColor: Colors.black87),
-        colorScheme: const ColorScheme(brightness: Brightness.light, primary: Colors.black87, onPrimary: Colors.white, secondary: Colors.white, onSecondary: Color.fromRGBO(55, 55, 55, 1), error: Color.fromRGBO(117, 117, 117, 1), onError: Color.fromRGBO(117, 117, 117, 1), background: Color.fromRGBO(117, 117, 117, 1), onBackground: Color.fromRGBO(224, 224, 224, 1), surface: Color.fromRGBO(117, 117, 117, 1), onSurface: Color.fromRGBO(117, 117, 117, 1),primaryContainer: Colors.black),
+        colorScheme: const ColorScheme(brightness: Brightness.light, primary: Colors.black87, onPrimary: Colors.white, secondary: Colors.white, onSecondary: Color.fromRGBO(55, 55, 55, 1), error: Color.fromRGBO(117, 117, 117, 1), onError: Color.fromRGBO(117, 117, 117, 1), background: Color.fromRGBO(117, 117, 117, 1), onBackground: Color.fromRGBO(224, 224, 224, 1), surface: Color.fromRGBO(117, 117, 117, 1), onSurface: Color.fromRGBO(117, 117, 117, 1),primaryContainer: Colors.black,onPrimaryContainer: Color.fromRGBO(224, 224, 224, 1),onSecondaryContainer: Color.fromARGB(40, 198, 48, 48)),
         indicatorColor: Colors.deepPurple,
         floatingActionButtonTheme: const FloatingActionButtonThemeData(backgroundColor: Color.fromRGBO(198, 48, 48, 1),hoverColor: Colors.white),
         iconTheme: const IconThemeData(color: Colors.black),
@@ -74,7 +74,7 @@ ThemeData lightTheme = ThemeData(
         ),
         headline4:TextStyle(
           fontWeight: FontWeight.w600,
-          fontSize: 17,
+          fontSize: 18,
           fontFamily: "Poppins",
           color: Colors.black),
         headline5:TextStyle(
@@ -93,6 +93,12 @@ ThemeData lightTheme = ThemeData(
       color: Colors.black54,
       fontSize: 15,
     ),
+    //Discount
+    subtitle1: TextStyle(
+      color: Color.fromRGBO(198, 48, 48, 1),
+      fontSize: 16,
+      fontWeight: FontWeight.bold
+    )
   ),
   backgroundColor: Colors.black,
   shadowColor: const Color.fromARGB(255, 227, 227, 227),
@@ -169,7 +175,7 @@ ThemeData darkTheme = ThemeData(
           },),
         ),
   appBarTheme: const AppBarTheme(backgroundColor: Color.fromARGB(221, 37, 35, 35)),
-  colorScheme: const ColorScheme(brightness: Brightness.dark, primary: Color.fromARGB(221, 37, 35, 35), onPrimary: Color.fromRGBO(66, 66, 66, 1), secondary: Color.fromARGB(5, 0, 0, 0), onSecondary: Colors.grey, error: Colors.grey, onError: Colors.grey, background: Colors.grey, onBackground: Color.fromRGBO(66, 66, 66, 1), surface: Colors.grey, onSurface: Colors.grey,primaryContainer: Colors.white54),
+  colorScheme: const ColorScheme(brightness: Brightness.dark, primary: Color.fromARGB(221, 37, 35, 35), onPrimary: Color.fromRGBO(66, 66, 66, 1), secondary: Color.fromARGB(5, 0, 0, 0), onSecondary: Colors.grey, error: Colors.grey, onError: Colors.grey, background: Colors.grey, onBackground: Color.fromRGBO(66, 66, 66, 1), surface: Colors.grey, onSurface: Colors.grey,primaryContainer: Colors.white54,onPrimaryContainer: Color.fromRGBO(48, 48, 48, 1),onSecondaryContainer: Color.fromARGB(219, 198, 48, 48)),
   indicatorColor: const Color.fromRGBO(198, 48, 48, 1),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(backgroundColor: Color.fromRGBO(198, 48, 48, 1),hoverColor: Colors.white),
   iconTheme: const IconThemeData(color: Colors.white),
@@ -187,11 +193,12 @@ ThemeData darkTheme = ThemeData(
     ),
     headline3:TextStyle(
           color: Colors.white54,
+          fontFamily: "Lato",
           fontSize: 16,
         ),
         headline4:TextStyle(
           fontWeight: FontWeight.w600,
-          fontSize: 17,
+          fontSize: 18,
           fontFamily: "Poppins",
           color: Colors.white),
         headline5:TextStyle(
@@ -209,6 +216,12 @@ ThemeData darkTheme = ThemeData(
       color: Colors.white54,
       fontSize: 15,
     ),
+    // Discount
+    subtitle1: TextStyle(
+      color: Colors.white,
+      fontSize: 16,
+      fontWeight: FontWeight.bold
+    )
   ),
   backgroundColor: Colors.black,
   shadowColor: const Color.fromRGBO(33, 33, 33, 1),
