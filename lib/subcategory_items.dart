@@ -1,4 +1,5 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
@@ -90,13 +91,6 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: true,
-          leading: InkWell(onTap: () {
-            provider.items.clear();
-            //provider.subCategories.clear();
-            Navigator.of(context).pop();
-          },
-          child: const Icon(Icons.arrow_back_rounded),
-          ),
           title:  Text(
             provider.subCategoryTitle,
             style: const TextStyle(color: Colors.white, fontSize: 25,fontFamily: "Poppins",fontWeight: FontWeight.bold),
@@ -107,7 +101,7 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
         body: GridView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 8),
                 physics: const BouncingScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,mainAxisExtent: 320),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,mainAxisExtent: 340),
 
                 itemCount: provider.items.length,
                 itemBuilder: (context, index) {
@@ -138,15 +132,20 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                               children: [
                                 Stack(
                                   children: [
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 10),
-                                      height: 150,
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20),
-                                          image: DecorationImage(
-                                              image: AssetImage('assets/images/${provider.items[index]["Image"]}'),
-                                              fit: BoxFit.cover)),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.only(top: 10),
+                                          height: 150,
+                                          width: 150,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(20),
+                                              image: DecorationImage(
+                                                  image: AssetImage('assets/images/${provider.items[index]["Image"]}'),
+                                                  fit: BoxFit.cover)),
+                                        ),
+                                      ],
                                     ),
                                     /* Padding(
                                       padding: const EdgeInsets.only(left: 10,top: 10),
@@ -164,12 +163,24 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                             ):Container()
                                       ),
                                     ),
-                                    Positioned(
+                                    /* Positioned(
                                       left: 74,
                                       top: 145,
                                       child: Text(
-                                            provider.items[index]["Quantity"] > 0?"":"Out of stock",
-                                            style: const TextStyle(fontSize: 14,color: Color.fromRGBO(198, 48, 48, 1)),
+                                            provider.items[index]["Quantity"] < 0?"":"Out of stock",
+                                            style: const TextStyle(fontSize: 15,color: Color.fromRGBO(198, 48, 48, 1),),
+                                          ),
+                                    ), */
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: Text(
+                                            provider.items[index]["Quantity"] < 0?"":"Out of stock",
+                                            style: const TextStyle(fontSize: 15.5,color: Color.fromRGBO(198, 48, 48, 1),),
                                           ),
                                     ),
                                   ],
@@ -182,6 +193,7 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                                 .textTheme
                                                 .headline3,
                                                 maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
                                           ),
                                 ),
                                 /* Row(
@@ -204,7 +216,7 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                 },
                                 color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
                                 textColor: Colors.white,
-                                child: const Text("Add to cart",style: TextStyle(fontFamily: "Lato",fontSize: 17),),
+                                child:AutoSizeText("Add to cart",style: TextStyle(fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*5.6),),
                                 ),
                                 //const SizedBox(width: 10,),
                                 IconButton(onPressed: (() {

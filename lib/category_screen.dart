@@ -93,8 +93,8 @@ class CategoryScreenState extends State<CategoryScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                            height: 150,
-                            width: 150,
+                            height: 135,
+                            width: 135,
                             decoration: BoxDecoration(
                                 //border: Border.all(color: Colors.grey,width: 2),
 
@@ -104,6 +104,7 @@ class CategoryScreenState extends State<CategoryScreen> {
                               borderRadius: BorderRadius.circular(20),
                               child: InkWell(
                                   onTap: () {
+                                    provider.items.clear();
                                     setState(() {
                                       provider.subCategoryTitle = snapshot
                                           .data?.docs[index]["SubCategoryName"];
@@ -156,7 +157,7 @@ class CategoryScreenState extends State<CategoryScreen> {
         children: [
           Container(
               //margin: EdgeInsets.symmetric(vertical: 5),
-              width: MediaQuery.of(context).size.width-292,
+              width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width*0.72,
               height: double.infinity,
               decoration: BoxDecoration(
                 //borderRadius:BorderRadius.only(topRight:Radius.circular(20),bottomRight:Radius.circular(20)) ,

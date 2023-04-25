@@ -45,7 +45,7 @@ class ShoppingListState extends State<ShoppingList> {
     {"Item Name": "Fish", "Image": "assets/images/Fish.jpg"},
     {"Item Name": "Flour", "Image": "assets/images/Flour.jpg"},
     {"Item Name": "Fruits", "Image": "assets/images/Fruits.jpg"},
-    {"Item Name": "Health", "Image": "assets/images/Healthy drinks.jpg"},
+    {"Item Name": "Health", "Image": "assets/images/Healthydrinks.jpg"},
     {"Item Name": "Masalas", "Image": "assets/images/Masalas.jpg"},
     {"Item Name": "Meat", "Image": "assets/images/Meat.jpg"},
     {"Item Name": "Noodles", "Image": "assets/images/Noodles.jpg"},

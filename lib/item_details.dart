@@ -109,7 +109,7 @@ class itemDetailsState extends State<itemDetails> {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 230,
+                      height: MediaQuery.of(context).size.height-MediaQuery.of(context).size.height*0.7,
                       child: PageView.builder(
                         physics: const BouncingScrollPhysics(),
                         itemCount: provider.itemImages.length,
@@ -148,8 +148,8 @@ class itemDetailsState extends State<itemDetails> {
                   ),
               ),
               Positioned(
-                left: MediaQuery.of(context).size.width-60,
-                top: MediaQuery.of(context).size.height-530,
+                left: MediaQuery.of(context).size.width-MediaQuery.of(context).size.width*0.2,
+                top: MediaQuery.of(context).size.height-MediaQuery.of(context).size.height*0.75,
                 child: IconButton(onPressed: (() {
                   setState(() {
                     liked = !liked;
