@@ -37,7 +37,7 @@ ThemeData lightTheme = ThemeData(
         hintColor: Colors.black,
         brightness: Brightness.light,
         appBarTheme: const AppBarTheme(backgroundColor: Colors.black87),
-        colorScheme: const ColorScheme(brightness: Brightness.light, primary: Colors.black87, onPrimary: Colors.white, secondary: Colors.white, onSecondary: Color.fromRGBO(55, 55, 55, 1), error: Color.fromRGBO(117, 117, 117, 1), onError: Color.fromRGBO(117, 117, 117, 1), background: Color.fromRGBO(117, 117, 117, 1), onBackground: Color.fromRGBO(224, 224, 224, 1), surface: Color.fromRGBO(117, 117, 117, 1), onSurface: Color.fromRGBO(117, 117, 117, 1),primaryContainer: Colors.black,onPrimaryContainer: Color.fromRGBO(224, 224, 224, 1),onSecondaryContainer: Color.fromARGB(40, 198, 48, 48)),
+        colorScheme: const ColorScheme(brightness: Brightness.light, primary: Colors.black87, onPrimary: Colors.white, secondary: Colors.white, onSecondary: Color.fromRGBO(55, 55, 55, 1), error: Color.fromRGBO(117, 117, 117, 1), onError: Color.fromRGBO(117, 117, 117, 1), background: Color.fromRGBO(117, 117, 117, 1), onBackground: Color.fromRGBO(224, 224, 224, 1), surface: Color.fromRGBO(117, 117, 117, 1), onSurface: Color.fromRGBO(117, 117, 117, 1),primaryContainer: Colors.black,onPrimaryContainer: Color.fromRGBO(224, 224, 224, 1),onSecondaryContainer: Color.fromARGB(40, 198, 48, 48),outline: Colors.white , secondaryContainer: Colors.white ),
         indicatorColor: Colors.deepPurple,
         floatingActionButtonTheme: const FloatingActionButtonThemeData(backgroundColor: Color.fromRGBO(198, 48, 48, 1),hoverColor: Colors.white),
         iconTheme: const IconThemeData(color: Colors.black),
@@ -82,6 +82,17 @@ ThemeData lightTheme = ThemeData(
           fontSize: 34,
           fontFamily: "Poppins",
           color: Colors.black),
+
+          headline6:TextStyle(
+          fontWeight: FontWeight.w400,
+          fontSize: 20,
+          fontFamily: "Lato",
+          color: Colors.black87),
+          headlineLarge: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 20,
+          fontFamily: "Poppins",
+          color: Colors.black87),
         
     bodyText1: TextStyle(
       color: Colors.black87,
@@ -94,7 +105,7 @@ ThemeData lightTheme = ThemeData(
       fontSize: 15,
     ),
     //Discount
-    subtitle1: TextStyle(
+    subtitle2: TextStyle(
       color: Color.fromRGBO(198, 48, 48, 1),
       fontSize: 16,
       fontWeight: FontWeight.bold
@@ -175,7 +186,7 @@ ThemeData darkTheme = ThemeData(
           },),
         ),
   appBarTheme: const AppBarTheme(backgroundColor: Color.fromARGB(221, 37, 35, 35)),
-  colorScheme: const ColorScheme(brightness: Brightness.dark, primary: Color.fromARGB(221, 37, 35, 35), onPrimary: Color.fromRGBO(66, 66, 66, 1), secondary: Color.fromARGB(5, 0, 0, 0), onSecondary: Colors.grey, error: Colors.grey, onError: Colors.grey, background: Colors.grey, onBackground: Color.fromRGBO(66, 66, 66, 1), surface: Colors.grey, onSurface: Colors.grey,primaryContainer: Colors.white54,onPrimaryContainer: Color.fromRGBO(48, 48, 48, 1),onSecondaryContainer: Color.fromARGB(219, 198, 48, 48)),
+  colorScheme: const ColorScheme(brightness: Brightness.dark, primary: Color.fromARGB(221, 37, 35, 35), onPrimary: Color.fromRGBO(66, 66, 66, 1), secondary: Color.fromARGB(5, 0, 0, 0), onSecondary: Colors.grey, error: Colors.grey, onError: Colors.grey, background: Colors.grey, onBackground: Color.fromRGBO(66, 66, 66, 1), surface: Colors.grey, onSurface: Colors.grey,primaryContainer: Colors.white54,onPrimaryContainer: Color.fromRGBO(48, 48, 48, 1),onSecondaryContainer: Color.fromARGB(219, 198, 48, 48), outline: Colors.black54,secondaryContainer: Color.fromRGBO(48, 48, 48, 1)),
   indicatorColor: const Color.fromRGBO(198, 48, 48, 1),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(backgroundColor: Color.fromRGBO(198, 48, 48, 1),hoverColor: Colors.white),
   iconTheme: const IconThemeData(color: Colors.white),
@@ -206,6 +217,19 @@ ThemeData darkTheme = ThemeData(
           fontSize: 34,
           fontFamily: "Poppins",
           color: Colors.white),
+           headline6:TextStyle(
+          fontWeight: FontWeight.w400,
+          fontSize: 20,
+          fontFamily: "Lato",
+          color: Colors.white),
+           
+           
+           headlineLarge: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 20,
+          fontFamily: "Poppins",
+          color: Colors.white),
+
     bodyText1: TextStyle(
       color: Colors.white,
       fontFamily: "Lato",

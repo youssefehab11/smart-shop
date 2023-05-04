@@ -153,11 +153,10 @@ class ShoppingListState extends State<ShoppingList> {
                   fontFamily: "Lato"),
             ),
           ),
-          provider.savedItemsNames.isEmpty?  Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center, 
-            children: const [Text("List is Empty",style: TextStyle(fontFamily: "Lato",fontSize: 17)),]),
-          )
+          provider.savedItemsNames.isEmpty?  
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center, 
+          children: const [Text("List is Empty",style: TextStyle(fontFamily: "Lato",fontSize: 17)),])
             : StatefulBuilder(
                 builder: (context, setState) {
                   return StatefulBuilder(
@@ -271,7 +270,7 @@ class ShoppingListState extends State<ShoppingList> {
                     (context, animation, secondaryAnimation, child) {
                   var begin = const Offset(0.0, -1);
                   var end = const Offset(0, 0);
-
+    
                   var tween = Tween(begin: begin, end: end);
                   var offsetAnimation = animation.drive(tween);
                   return SlideTransition(
@@ -309,126 +308,122 @@ class ShoppingListState extends State<ShoppingList> {
                               return Stack(
                                 clipBehavior: Clip.none,
                                 children: [
-                                  Column(
-                                    children: [
-                                      Container(
-                                          padding: const EdgeInsets.only(
-                                              top: 20,
-                                              bottom: 20,
-                                              left: 5,
-                                              right: 5),
-                                          height: 430,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(40)),
-                                          child: ListView.builder(
-                                            physics:
-                                                const BouncingScrollPhysics(),
-                                            itemCount: subCategory.length,
-                                            itemBuilder: (context, index) {
-                                              return Column(
-                                                children: [
-                                                  Container(
-                                                      height: 70,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width -
-                                                              45,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(30),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                              blurRadius: 1,
-                                                              offset:
-                                                                  const Offset(
-                                                                      1, 1),
-                                                              spreadRadius: 0.5,
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .shadowColor)
-                                                        ],
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .onPrimary,
+                                  Container(
+                                      padding: const EdgeInsets.only(
+                                          top: 20,
+                                          bottom: 20,
+                                          left: 5,
+                                          right: 5),
+                                      height: 430,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(40)),
+                                      child: ListView.builder(
+                                        physics:
+                                            const BouncingScrollPhysics(),
+                                        itemCount: subCategory.length,
+                                        itemBuilder: (context, index) {
+                                          return Column(
+                                            children: [
+                                              Container(
+                                                  height: 70,
+                                                  width:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width -
+                                                          45,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius
+                                                            .circular(30),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                          blurRadius: 1,
+                                                          offset:
+                                                              const Offset(
+                                                                  1, 1),
+                                                          spreadRadius: 0.5,
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .shadowColor)
+                                                    ],
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onPrimary,
+                                                  ),
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Padding(
+                                                          padding: EdgeInsets
+                                                              .only(
+                                                                  left:
+                                                                      20)),
+                                                      Container(
+                                                        height: 55,
+                                                        width: 55,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        50),
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                      blurRadius:
+                                                                          1,
+                                                                      offset: const Offset(1.5,
+                                                                          1.5),
+                                                                      spreadRadius:
+                                                                          0.5,
+                                                                      color:
+                                                                          Theme.of(context).shadowColor)
+                                                                ],
+                                                                image: DecorationImage(
+                                                                    image: AssetImage(
+                                                                        "${subCategory[index]["Image"]}"),
+                                                                    fit: BoxFit
+                                                                        .cover)),
                                                       ),
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          const Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      left:
-                                                                          20)),
-                                                          Container(
-                                                            height: 55,
-                                                            width: 55,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            50),
-                                                                    boxShadow: [
-                                                                      BoxShadow(
-                                                                          blurRadius:
-                                                                              1,
-                                                                          offset: const Offset(1.5,
-                                                                              1.5),
-                                                                          spreadRadius:
-                                                                              0.5,
-                                                                          color:
-                                                                              Theme.of(context).shadowColor)
-                                                                    ],
-                                                                    image: DecorationImage(
-                                                                        image: AssetImage(
-                                                                            "${subCategory[index]["Image"]}"),
-                                                                        fit: BoxFit
-                                                                            .cover)),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Text(
-                                                            "${subCategory[index]["Item Name"]}",
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 20,
-                                                              fontFamily: "Lato"
-                                                            ),
-                                                          ),
-                                                          const Spacer(),
-                                                          Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    right: 10),
-                                                            child: Checkbox(
-
-                                                              value: checked[
-                                                                  index],
-                                                              onChanged: (val) {
-                                                                setState(() {
-                                                                  checked[index] =
-                                                                      val!;
-                                                                });
-                                                              },
-                                                            ),
-                                                          )
-                                                        ],
-                                                      )),
-                                                  const SizedBox(
-                                                    height: 5,
-                                                  )
-                                                ],
-                                              );
-                                            },
-                                          )),
-                                    ],
-                                  ),
+                                                      const SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      Text(
+                                                        "${subCategory[index]["Item Name"]}",
+                                                        style:
+                                                            const TextStyle(
+                                                          fontSize: 20,
+                                                          fontFamily: "Lato"
+                                                        ),
+                                                      ),
+                                                      const Spacer(),
+                                                      Container(
+                                                        margin:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                right: 10),
+                                                        child: Checkbox(
+    
+                                                          value: checked[
+                                                              index],
+                                                          onChanged: (val) {
+                                                            setState(() {
+                                                              checked[index] =
+                                                                  val!;
+                                                            });
+                                                          },
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )),
+                                              const SizedBox(
+                                                height: 5,
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      )),
                                   Positioned(
                                       left: 0,
                                       right: 0,

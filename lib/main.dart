@@ -1,3 +1,4 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/auth_screen.dart';
 import 'package:graduationproject/home_screen.dart';
@@ -8,7 +9,9 @@ import 'package:graduationproject/subcategory_items.dart';
 import 'package:graduationproject/test.dart';
 import 'package:graduationproject/test0.dart';
 import 'package:graduationproject/test2.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'about.dart';
 import 'intro_screen.dart';
 import 'package:graduationproject/theme_manager';
 import 'package:graduationproject/themes.dart';
@@ -16,10 +19,26 @@ import 'package:graduationproject/category_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'forgot_password.dart';
+import 'transition_animation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'help.dart';
 
-void main() async{
+
+bool islogin = false;
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+var user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) {
+    islogin = false;
+  } else {
+    islogin = true;
+  }
+
+
   runApp(MyApp());
 }
 
@@ -52,24 +71,29 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create:(context) => ProviderController(),
+      create: (context) => ProviderController(),
       child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: _themeManager.themeMode,
-      home: NavigationBarController(),
-      routes: {
-        'Login': (context) => AuthScreen(),
-        'Register': (context) => RegisterScreen(),
-        'Home': (context) => NavigationBarController(),
-        //'test 2':  (context) => test2(),
-        'test':  (context) => test(),
-        'ForgotPassword' : (context) => ForgotPassword(),
-        'Verification' :  (context) => Verification(),
-        'NewPassword' :  (context) => NewPassword(), 
-      },
-    ), );
+        debugShowCheckedModeBanner: false,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: _themeManager.themeMode,
+        home: islogin == false ? AuthScreen() : NavigationBarController(),
+        routes: {
+          'Login': (context) => AuthScreen(),
+          'Register': (context) => RegisterScreen(),
+          'Home': (context) => NavigationBarController(),
+          //'test 2':  (context) => test2(),
+          'test': (context) => test(),
+          'ForgotPassword': (context) => ForgotPassword(),
+          'Verification': (context) => Verification(),
+          'NewPassword': (context) => NewPassword(),
+          //'About': (context) => AboutPage(),
+          // 'AboutApp': (context) => AboutApp(),
+          //'PrivacyPolicy': (context) => PrivacyPolicy(),
+          //'Help': (context) => FAQ(),
+        },
+      ),
+    );
   }
 }
 
@@ -93,7 +117,11 @@ class SettingsScreenState extends State<SettingsScreen> {
         automaticallyImplyLeading: false,
         title: const Text(
           "Settings",
-          style: TextStyle(color: Colors.white, fontSize: 25,fontFamily: "Poppins",fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 25,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         //elevation: 0.0,
@@ -128,10 +156,10 @@ class SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(
                       width: 15,
                     ),
-                     Expanded(
+                    Expanded(
                       child: Text(
                         "Notifications",
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.headline6,
                       ),
                     ),
                     Switch(
@@ -163,11 +191,11 @@ class SettingsScreenState extends State<SettingsScreen> {
                     Expanded(
                       child: Text(
                         "Dark Mode",
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.headline6,
                       ),
                     ),
                     Switch(
-                      //activeColor: _themeManager.themeMode == ThemeMode.dark?Colors.purpleAccent:Colors.deepPurple,
+                        //activeColor: _themeManager.themeMode == ThemeMode.dark?Colors.purpleAccent:Colors.deepPurple,
                         value: _themeManager.themeMode == ThemeMode.dark,
                         onChanged: (val) {
                           setState(() {
@@ -211,7 +239,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     Expanded(
                       child: Text(
                         "Country",
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.headline6,
                       ),
                     ),
                     DropdownButton(
@@ -251,7 +279,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     Expanded(
                       child: Text(
                         "Language",
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.headline6,
                       ),
                     ),
                     DropdownButton(
@@ -289,82 +317,103 @@ class SettingsScreenState extends State<SettingsScreen> {
                 MaterialButton(
                     onPressed: () {
                       showModalBottomSheet(
-                        backgroundColor: const Color.fromARGB(0, 69, 69, 69),
-                        shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)) ,
-                        context: context, builder: ((context) {
-                        return SizedBox(
-                          height: 140,
-                          child: Column(children: [
-                            InkWell(
-                              onTap: () {
-                                launchUrl(Uri.parse("tel:+201060004750"));
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              width: double.infinity,
-                              height: 65,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.black45
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(margin: const EdgeInsets.symmetric(horizontal: 20),
-                                    child: const Icon(Icons.phone_in_talk,color: Colors.grey,size: 30,),
+                          backgroundColor: const Color.fromARGB(0, 69, 69, 69),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          context: context,
+                          builder: ((context) {
+                            return SizedBox(
+                              height: 140,
+                              child: Column(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      launchUrl(Uri.parse("tel:+201060004750"));
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      width: double.infinity,
+                                      height: 65,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          color: Colors.black45),
+                                      child: Center(
+                                          child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 20),
+                                            child: const Icon(
+                                              Icons.phone_in_talk,
+                                              color: Colors.grey,
+                                              size: 30,
+                                            ),
+                                          ),
+                                          const Text(
+                                            "(+20) 1060004750",
+                                            style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    198, 48, 48, 1),
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "Lato"),
+                                          ),
+                                        ],
+                                      )),
                                     ),
-                                    const Text("(+20) 1060004750",
-                                style: TextStyle(
-                                  color: Color.fromRGBO(198, 48, 48, 1),
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Lato"
-                                ),
-                                ),
-                                  ],
-                                )
+                                  ),
+                                  const Divider(
+                                    thickness: 0,
+                                    height: 5,
+                                    color: Color.fromARGB(0, 69, 69, 69),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      width: double.infinity,
+                                      height: 65,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          color: Colors.black87),
+                                      child: const Center(
+                                          child: Text(
+                                        "Cancel",
+                                        style: TextStyle(
+                                            color:
+                                                Color.fromRGBO(198, 48, 48, 1),
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "Lato"),
+                                      )),
+                                    ),
+                                  )
+                                ],
                               ),
-                            ),
-                            ),
-                            const Divider(thickness: 0,height: 5,color: Color.fromARGB(0, 69, 69, 69),),
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              width: double.infinity,
-                              height: 65,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.black87
-                              ),
-                              child: const Center(child: Text("Cancel",
-                              style: TextStyle(
-                                color: Color.fromRGBO(198, 48, 48, 1),
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Lato"
-                                ),)),
-                              ),
-                            )
-                          ],),
-                        );
-                      }));
+                            );
+                          }));
                     },
                     height: 60,
                     child: Row(
-                      children:[
-                        Icon(Icons.phone_in_talk_outlined,color: Theme.of(context).iconTheme.color,),
+                      children: [
+                        Icon(
+                          Icons.phone_in_talk_outlined,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
                         const SizedBox(
                           width: 15,
                         ),
-                        Text(
-                          "Contact Us",
-                          style: Theme.of(context).textTheme.bodyText1
-                        )
+                        Text("Contact Us",
+                            style: Theme.of(context).textTheme.headline6)
                       ],
                     )),
                 Container(
@@ -376,21 +425,25 @@ class SettingsScreenState extends State<SettingsScreen> {
                   child: const Divider(),
                 ),
                 MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(SlideLeftAnimationRoute(Page: const Help()));
+                    },
                     height: 60,
                     child: Row(
-                      children:  [
-                        Icon(Icons.help_outline_rounded, color: Theme.of(context).iconTheme.color,),
+                      children: [
+                        Icon(
+                          Icons.help_outline_rounded,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
                         const SizedBox(
                           width: 15,
                         ),
-                        Text(
-                          "Help",
-                          style: Theme.of(context).textTheme.bodyText1
-                        )
+                        Text("Help",
+                            style: Theme.of(context).textTheme.headline6)
                       ],
                     )),
-                     Container(
+                Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   color: _themeManager.themeMode == ThemeMode.dark
                       ? Colors.grey[850]
@@ -399,18 +452,22 @@ class SettingsScreenState extends State<SettingsScreen> {
                   child: const Divider(),
                 ),
                 MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          SlideLeftAnimationRoute(Page: const AboutPage()));
+                    },
                     height: 60,
                     child: Row(
-                      children:[
-                        Icon(Icons.error_outline_rounded,color: Theme.of(context).iconTheme.color,),
+                      children: [
+                        Icon(
+                          Icons.error_outline_rounded,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
                         const SizedBox(
                           width: 15,
                         ),
-                        Text(
-                          "About",
-                          style: Theme.of(context).textTheme.bodyText1
-                        )
+                        Text("About",
+                            style: Theme.of(context).textTheme.headline6)
                       ],
                     )),
               ],
@@ -421,3 +478,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
+
+
+
+

@@ -29,6 +29,7 @@ class CategoryScreenState extends State<CategoryScreen> {
       context: context,
       builder: (BuildContext context) {
         return AnimatedSplashScreen(
+          
             disableNavigation: true,
             splashIconSize: 150,
             backgroundColor: const Color.fromARGB(0, 0, 0, 0),

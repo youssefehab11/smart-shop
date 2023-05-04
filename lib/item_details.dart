@@ -1,4 +1,6 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
@@ -13,10 +15,6 @@ class itemDetailsState extends State<itemDetails> {
   bool liked = false;
   var similarItemsLiked = [];
   int selectedPage = 0;
-
-  /* Widget imageView(int pageNumber){
-    
-  } */
 
   Widget yellowStar(){
     return const Padding(
@@ -143,7 +141,7 @@ class itemDetailsState extends State<itemDetails> {
                   color: Theme.of(context).colorScheme.onSecondaryContainer,
                   child:provider.itemDiscount > 0 ?  Text(
                   " - ${provider.itemDiscount}%",
-                  style:Theme.of(context).textTheme.subtitle1,
+                  style:Theme.of(context).textTheme.subtitle2,
                   ):const SizedBox(width: 0,height: 0,)
                   ),
               ),
@@ -287,7 +285,7 @@ class itemDetailsState extends State<itemDetails> {
                             width: 300,
                             height: 50,
                             child: InkWell(onTap: provider.itemQuantity == 0 ? null :() {
-                              //Add item to cart
+                              
                             },
                             child: Container(
                               width: 300,

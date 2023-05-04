@@ -34,6 +34,11 @@ class ProviderController extends ChangeNotifier{
   int numberOfItemImages = 0;
   int itemDiscount = 0;
   String priceOfDiscount = "";
+
+  int defaultQuantity = 1;
+  int numberOfCartItems = 0;
+  List cartItems = [];
+
   
 
   void makeListItemName(List checked,List subCategory){

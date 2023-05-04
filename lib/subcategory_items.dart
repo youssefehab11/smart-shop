@@ -1,5 +1,10 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
@@ -15,6 +20,8 @@ class SubCategoryItems extends StatefulWidget{
 class SubCategoryItemsState extends State<SubCategoryItems> {
   
   List<bool> recommendationliked = [];
+  
+  
 
   void loadingItem() {
     showDialog(
@@ -147,30 +154,15 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                         ),
                                       ],
                                     ),
-                                    /* Padding(
-                                      padding: const EdgeInsets.only(left: 10,top: 10),
-                                      child: Text(
-                                          provider.items[index]["Quantity"] > 0?"":"Out of stock",
-                                          style: TextStyle(fontSize: 14,color: Colors.red),
-                                        ),
-                                    ) */Positioned(
-                                      
+                                    Positioned(  
                                       child: Container(
                                         color: Theme.of(context).colorScheme.onSecondaryContainer,
                                         child:provider.items[index]["Discount"] > 0 ?  Text(
                                               " - ${provider.items[index]["Discount"]}%",
-                                              style:Theme.of(context).textTheme.subtitle1 
+                                              style:Theme.of(context).textTheme.subtitle2 
                                             ):Container()
                                       ),
                                     ),
-                                    /* Positioned(
-                                      left: 74,
-                                      top: 145,
-                                      child: Text(
-                                            provider.items[index]["Quantity"] < 0?"":"Out of stock",
-                                            style: const TextStyle(fontSize: 15,color: Color.fromRGBO(198, 48, 48, 1),),
-                                          ),
-                                    ), */
                                   ],
                                 ),
                                 Row(
@@ -179,7 +171,7 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                     Padding(
                                       padding: const EdgeInsets.only(right: 8),
                                       child: Text(
-                                            provider.items[index]["Quantity"] < 0?"":"Out of stock",
+                                            provider.items[index]["Quantity"] > 0?"":"Out of stock",
                                             style: const TextStyle(fontSize: 15.5,color: Color.fromRGBO(198, 48, 48, 1),),
                                           ),
                                     ),
@@ -196,39 +188,25 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                                 overflow: TextOverflow.ellipsis,
                                           ),
                                 ),
-                                /* Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left:8.0,top: 5),
-                                      child: Text(
-                                              "${provider.items[index]["Price"]} EGP",
-                                              style: Theme.of(context).textTheme.headline4,
-                                            ),
-                                    ),
-                                  ],
-                                ), */
                                 checkIemDiscount(index),
                                  Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                   MaterialButton(onPressed: () {
-                                  
-                                },
-                                color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-                                textColor: Colors.white,
-                                child:AutoSizeText("Add to cart",style: TextStyle(fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*5.6),),
-                                ),
-                                //const SizedBox(width: 10,),
-                                IconButton(onPressed: (() {
-                                  setState(() {
-                                    recommendationliked[index] = !recommendationliked[index];
-                                  });
-                                })
-                                , icon:Icon(recommendationliked[index] == false? Icons.favorite_border_outlined:Icons.favorite,color: const Color.fromRGBO(198, 48, 48, 1),size: 30,) )
-                                ],)
-                                
+                                    
+                                  },
+                                  color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+                                  textColor: Colors.white,
+                                  child:Text("Add to cart",style: TextStyle(fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*5.6),),
+                                  ),
+                                  IconButton(onPressed: (() {
+                                    setState(() {
+                                      recommendationliked[index] = !recommendationliked[index];
+                                    });
+                                  })
+                                  , icon:Icon(recommendationliked[index] == false? Icons.favorite_border_outlined:Icons.favorite,color: const Color.fromRGBO(198, 48, 48, 1),size: 30,) )
+                                  ],)  
                                 ]
-                      
                     ),
                   ));
                 },
@@ -236,104 +214,3 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
     );
   }
 }
-
-/* InkWell(
-                          onTap: () {},
-                          child: Container(
-                            width: 170,
-                            height: 350,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                boxShadow: [
-                                  BoxShadow(
-                                      blurRadius: 1,
-                                      offset: const Offset(1.5, 1.5),
-                                      spreadRadius: 0.5,
-                                      color: Theme.of(context).shadowColor)
-                                ]),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(top: 10),
-                                  height: 150,
-                                  width: 150,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/${provider.items[index]["Image"]}'),
-                                          fit: BoxFit.cover)),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 8, top: 15,right: 8,bottom: 5),
-                                  child: SizedBox(
-                                    width: 150,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          provider.items[index]["Description"],
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        ),
-                                        Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 8, top: 5),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "${provider.items[index]["Price"]} EGP",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                       provider.items[index]["Quantity"]>0 ? const EdgeInsets.all(0):const EdgeInsets.only(left: 8, top: 5),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        provider.items[index]["Quantity"] > 0?"":"Out of stock",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                
-                                /* Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                  MaterialButton(onPressed: () {
-                                  
-                                },
-                                color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-                                textColor: Colors.white,
-                                child: const Text("Add to cart",style: TextStyle(fontFamily: "Lato",fontSize: 17),),
-                                ),
-                                //const SizedBox(width: 10,),
-                                IconButton(onPressed: (() {
-                                  setState(() {
-                                    recommendationliked[index] = !recommendationliked[index];
-                                  });
-                                })
-                                , icon:Icon(recommendationliked[index] == false? Icons.favorite_border_outlined:Icons.favorite,color: const Color.fromRGBO(198, 48, 48, 1),size: 30,) )
-                                ],) */
-                              ],
-                            ),
-                          ),
-                        ); */

@@ -6,6 +6,7 @@ import 'package:graduationproject/auth_form.dart';
 import 'package:graduationproject/home_screen.dart';
 import 'package:graduationproject/navigationbar_controller_screen.dart';
 import 'package:graduationproject/original_button.dart';
+import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/register_screen.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:rive/rive.dart';
@@ -36,6 +37,8 @@ class AuthScreenState extends State<AuthScreen> {
     artboard.addController(controller!);
     return controller;
   }
+
+  final provier = ProviderController();
 
 
   final TextEditingController _passwordController = TextEditingController();
@@ -282,8 +285,6 @@ class AuthScreenState extends State<AuthScreen> {
                                                                                 email: _email,
                                                                                 password: _password);
 
-                                                                        
-
                                                                         Future
                                                                             .delayed(
                                                                           const Duration(
@@ -457,8 +458,6 @@ class AuthScreenState extends State<AuthScreen> {
                                                                   },
                                                                 );
                                                                
-
-
 
 
 
