@@ -67,7 +67,7 @@ class itemDetailsState extends State<itemDetails> {
     if(provider.itemDiscount == 0){
       return Padding(
         padding: const EdgeInsets.only(top: 20,left: 15,),
-        child: Text("${provider.stringItemPrice} EGP",style: Theme.of(context).textTheme.headline2),
+        child: Text("${provider.doubleItemPrice} EGP",style: Theme.of(context).textTheme.headline2),
         );
     }
     else{
@@ -227,20 +227,25 @@ class itemDetailsState extends State<itemDetails> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children:[
-                        InkWell(
-                          onTap: selectedQuantity == 1 ? null :() {
-                            setState(() {
-                              selectedQuantity --;
-                            });
-                          },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor:selectedQuantity == 1 ? Colors.grey:const Color.fromRGBO(198, 48, 48, 1),
-                            child: const Center(child: Icon(Icons.remove,color: Colors.white,)),
-                          ),
-                        )),
+                        Container(
+                                margin: const EdgeInsets.all(6),
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                color: selectedQuantity == 1 ? Colors.grey:const Color.fromRGBO(198, 48, 48, 1),),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: selectedQuantity == 1 ? null : () {
+                                      setState(() {
+                                        selectedQuantity--;
+                                      });
+                                    },
+                                    customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                                  child:  const Center(child: Icon(Icons.remove,color: Colors.white,))),
+                                ),
+                              ),
                         Container(
                           width: 200,
                           height: 40,
@@ -248,20 +253,25 @@ class itemDetailsState extends State<itemDetails> {
                             borderRadius: BorderRadius.circular(50),
                             border: Border.all(color: Colors.grey)),
                           child: Center(child: Text("Qty: ${selectedQuantity.toString()}",style:Theme.of(context).textTheme.bodyText1))),
-                        InkWell(
-                          onTap: selectedQuantity == provider.itemQuantity ? null :() {
-                            setState(() {
-                              selectedQuantity ++;
-                            });
-                          },
-                        child: Padding(
-                          padding:const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor:selectedQuantity == provider.itemQuantity ? Colors.grey:const Color.fromRGBO(198, 48, 48, 1) ,
-                            child: const Center(child: Icon(Icons.add,color: Colors.white,)),
-                          ),
-                        )),
+                        Container(
+                                margin: const EdgeInsets.all(6),
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                color: selectedQuantity == provider.itemQuantity  ? Colors.grey:const Color.fromRGBO(198, 48, 48, 1),),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: selectedQuantity == provider.itemQuantity ? null : () {
+                                      setState(() {
+                                        selectedQuantity++;
+                                      });
+                                    },
+                                    customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                                  child:  const Center(child: Icon(Icons.add,color: Colors.white,))),
+                                ),
+                              ),
                       ],),
                       Row(
                         children: [
@@ -284,16 +294,49 @@ class itemDetailsState extends State<itemDetails> {
                           SizedBox(
                             width: 300,
                             height: 50,
-                            child: InkWell(onTap: provider.itemQuantity == 0 ? null :() {
-                              
-                            },
                             child: Container(
-                              width: 300,
-                              height: 50,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color:provider.itemQuantity == 0 ? Colors.grey:const Color.fromRGBO(198, 48, 48, 1)),
-                              child:Center(
+                                    borderRadius: BorderRadius.circular(50),
+                                    color:provider.itemQuantity == 0 ? Colors.grey:const Color.fromRGBO(198, 48, 48, 1)),
+                              child: Material(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                                color: Colors.transparent,
+                                child: InkWell(onTap: provider.itemQuantity == 0 ? null :() {
+                                     bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == provider.itemName,);
+                                      if(!foundInCart){
+                                        if(provider.itemDiscount == 0){
+                                            provider.cartItems.add({
+                                              "Item Name":provider.itemName,
+                                              "Image":provider.itemImages[0],
+                                              "Selected Quantity":selectedQuantity,
+                                              "Price":provider.doubleItemPrice,
+                                              "Total Quantity":provider.itemQuantity,
+                                              });
+                                        }
+                                        else{
+                                          provider.cartItems.add({
+                                            "Item Name":provider.itemName,
+                                            "Image":provider.itemImages[0],
+                                            "Selected Quantity":selectedQuantity,
+                                            "Price":provider.priceOfDiscount,
+                                            "Total Quantity":provider.itemQuantity,
+                                          });
+                                          }
+                                      }
+                                      else{
+                                        int indexFound = provider.cartItems.indexWhere((element) => element["Item Name"] == provider.itemName);
+                                        provider.cartItems.removeAt(indexFound);
+                                        provider.cartItems.insert(indexFound, {
+                                          "Item Name":provider.itemName,
+                                            "Image":provider.itemImages[0],
+                                            "Selected Quantity":selectedQuantity,
+                                            "Price":provider.priceOfDiscount,
+                                            "Total Quantity":provider.itemQuantity,
+                                        });
+                                      }
+                                      
+                                },
+                                customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -305,8 +348,8 @@ class itemDetailsState extends State<itemDetails> {
                                     :const Text("Add to Cart",
                                     style: TextStyle(fontFamily: "Poppins",fontSize: 17,color: Colors.white),),
                                 ],)
-                              )
-                            )
+                                ),
+                              ),
                             ),
                           )
                         ],),

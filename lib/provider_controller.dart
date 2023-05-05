@@ -33,7 +33,7 @@ class ProviderController extends ChangeNotifier{
   int totalReviews = 0;
   int numberOfItemImages = 0;
   int itemDiscount = 0;
-  String priceOfDiscount = "";
+  double priceOfDiscount = 0.00;
 
   int defaultQuantity = 1;
   int numberOfCartItems = 0;
@@ -119,7 +119,7 @@ class ProviderController extends ChangeNotifier{
       avgItemRate = (itemRates[0]*1 + itemRates[1]*2 + itemRates[2]*3 + itemRates[3]*4 + itemRates[4]*5)/totalReviews;
       itemDiscount = value.get("Discount");
       doubleItemPrice = value.get("Price")+0.00;
-      priceOfDiscount = double.parse(( doubleItemPrice - (doubleItemPrice * itemDiscount/100)).toStringAsFixed(2)).toString();
+      priceOfDiscount = double.parse(( doubleItemPrice - (doubleItemPrice * itemDiscount/100)).toStringAsFixed(2));
     });
   }
 
@@ -131,7 +131,6 @@ class ProviderController extends ChangeNotifier{
       });
     });
   }
-
   static ProviderController of(
     BuildContext context, {
     bool listen = true,

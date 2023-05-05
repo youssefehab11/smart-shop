@@ -192,12 +192,42 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                  Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                  MaterialButton(onPressed: () {
-                                    
-                                  },
-                                  color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-                                  textColor: Colors.white,
-                                  child:Text("Add to cart",style: TextStyle(fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*5.6),),
+                                  Container(
+                                    color:provider.items[index]["Quantity"] == 0 ? Colors.grey[350]:const Color.fromRGBO(198, 48, 48, 1),
+                                    width: 100,
+                                    height: 35,
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(onTap: provider.items[index]["Quantity"] == 0 ? null :() {
+                                      double value = double.parse((provider.items[index]["Price"]-(provider.items[index]["Price"] * provider.items[index]["Discount"]/100)).toStringAsFixed(2));
+                                      bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == provider.items[index]["Item Name"],);
+                                  if(!foundInCart){
+                                    if(provider.itemDiscount == 0){
+                                        provider.cartItems.add({
+                                          "Item Name":provider.items[index]["Item Name"],
+                                          "Image":provider.items[index]["Image"],
+                                          "Selected Quantity":provider.defaultQuantity,
+                                          "Price":provider.items[index]["Price"],
+                                          "Total Quantity":provider.items[index]["Quantity"],
+                                          });
+                                    }
+                                    else{
+                                      provider.cartItems.add({
+                                        "Item Name":provider.items[index]["Item Name"],
+                                        "Image":provider.items[index]["Image"],
+                                        "Selected Quantity":provider.defaultQuantity,
+                                        "Price":value,
+                                        "Total Quantity":provider.items[index]["Quantity"],
+                                      });
+                                      }
+                                  }
+                                      },
+                                      child:Center(child: provider.items[index]["Quantity"] == 0 ? 
+                                      Text("Sold out",style: TextStyle(color: Colors.white,fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*6),)
+                                      :Text("Add to cart",style: TextStyle(color: Colors.white,fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*5.6),)
+                                      ),
+                                      ),
+                                    ),
                                   ),
                                   IconButton(onPressed: (() {
                                     setState(() {
