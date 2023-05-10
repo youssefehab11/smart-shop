@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:graduationproject/search.dart';
 import 'package:graduationproject/shopping_list.dart';
 import 'package:graduationproject/transition_animation.dart';
 
@@ -30,30 +31,37 @@ class HomePageState extends State<HomePage> {
               children: [
                 Expanded(
                     child: Container(
-                  margin: const EdgeInsets.only(top: 15, left: 7, right: 3.5),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white),
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(left: 5),
-                        child: const Icon(
-                          Icons.search,
-                          color: Colors.black,
+                      height: 50,
+                      margin: const EdgeInsets.only(top: 15, left: 7, right: 3.5),
+                                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white
+                         ),
+                      child: InkWell(
+                        onTap: () {
+                          showSearch(context: context, delegate: SearchItems());
+                        },
+                        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                          children: const[
+                             Icon(
+                              Icons.search,
+                              color: Colors.black,
+                            ),
+                             SizedBox(
+                              width: 5,
+                            ),
+                             Text(
+                              "Find Product",
+                              style: TextStyle(color: Colors.black),
+                            )
+                          ],
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Text(
-                        "Find Product",
-                        style: TextStyle(color: Colors.black),
-                      )
-                    ],
-                  ),
-                )),
+                    )),
                 Container(
                   margin: const EdgeInsets.only(top: 15, left: 3.5, right: 7),
                   decoration: BoxDecoration(

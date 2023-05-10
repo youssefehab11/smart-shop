@@ -109,7 +109,7 @@ ThemeData lightTheme = ThemeData(
       color: Color.fromRGBO(198, 48, 48, 1),
       fontSize: 16,
       fontWeight: FontWeight.bold
-    )
+    ),
   ),
   backgroundColor: Colors.black,
   shadowColor: const Color.fromARGB(255, 227, 227, 227),

@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
@@ -309,7 +310,8 @@ class itemDetailsState extends State<itemDetails> {
                                               "Item Name":provider.itemName,
                                               "Image":provider.itemImages[0],
                                               "Selected Quantity":selectedQuantity,
-                                              "Price":provider.doubleItemPrice,
+                                              "Price":provider.doubleItemPrice * selectedQuantity,
+                                              "Default Price":provider.doubleItemPrice,
                                               "Total Quantity":provider.itemQuantity,
                                               });
                                         }
@@ -318,7 +320,8 @@ class itemDetailsState extends State<itemDetails> {
                                             "Item Name":provider.itemName,
                                             "Image":provider.itemImages[0],
                                             "Selected Quantity":selectedQuantity,
-                                            "Price":provider.priceOfDiscount,
+                                            "Price":provider.priceOfDiscount * selectedQuantity,
+                                            "Default Price":provider.priceOfDiscount,
                                             "Total Quantity":provider.itemQuantity,
                                           });
                                           }
@@ -330,11 +333,17 @@ class itemDetailsState extends State<itemDetails> {
                                           "Item Name":provider.itemName,
                                             "Image":provider.itemImages[0],
                                             "Selected Quantity":selectedQuantity,
-                                            "Price":provider.priceOfDiscount,
+                                            "Price":provider.priceOfDiscount * selectedQuantity,
+                                            "Default Price":provider.priceOfDiscount,
                                             "Total Quantity":provider.itemQuantity,
                                         });
                                       }
-                                      
+                                      Fluttertoast.showToast(
+                                        msg: "Successfully added",
+                                        backgroundColor: Colors.black54,
+                                        toastLength:Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM
+                                        );
                                 },
                                 customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                                 child: Row(

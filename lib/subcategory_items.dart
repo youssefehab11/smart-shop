@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart';
@@ -202,12 +203,13 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                       double value = double.parse((provider.items[index]["Price"]-(provider.items[index]["Price"] * provider.items[index]["Discount"]/100)).toStringAsFixed(2));
                                       bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == provider.items[index]["Item Name"],);
                                   if(!foundInCart){
-                                    if(provider.itemDiscount == 0){
+                                    if(provider.items[index]["Discount"] == 0){
                                         provider.cartItems.add({
                                           "Item Name":provider.items[index]["Item Name"],
                                           "Image":provider.items[index]["Image"],
                                           "Selected Quantity":provider.defaultQuantity,
                                           "Price":provider.items[index]["Price"],
+                                          "Default Price":provider.items[index]["Price"],
                                           "Total Quantity":provider.items[index]["Quantity"],
                                           });
                                     }
@@ -217,10 +219,17 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                         "Image":provider.items[index]["Image"],
                                         "Selected Quantity":provider.defaultQuantity,
                                         "Price":value,
+                                        "Default Price":value,
                                         "Total Quantity":provider.items[index]["Quantity"],
                                       });
                                       }
                                   }
+                                  Fluttertoast.showToast(
+                                        msg: "Successfully added",
+                                        backgroundColor: Colors.black54,
+                                        toastLength:Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM
+                                        );
                                       },
                                       child:Center(child: provider.items[index]["Quantity"] == 0 ? 
                                       Text("Sold out",style: TextStyle(color: Colors.white,fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*6),)

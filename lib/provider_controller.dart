@@ -131,6 +131,17 @@ class ProviderController extends ChangeNotifier{
       });
     });
   }
+
+  getSubCategoryIdFromSearch(String subCategory)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList");
+    await collectionReference.where("SubCategory",isEqualTo: subCategory).get().then((value) {
+      value.docs.forEach((element) {
+          subCategoryId = element.id;
+      });
+    });
+    getItems();
+  }
+
   static ProviderController of(
     BuildContext context, {
     bool listen = true,
