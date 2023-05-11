@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -38,6 +40,11 @@ class ProviderController extends ChangeNotifier{
   int defaultQuantity = 1;
   int numberOfCartItems = 0;
   List cartItems = [];
+
+  late CameraPosition kGooglePlex;
+  var lat;
+  var long;
+  var currentLocation;
 
   
 
@@ -131,15 +138,20 @@ class ProviderController extends ChangeNotifier{
       });
     });
   }
-
-  getSubCategoryIdFromSearch(String subCategory)async{
-    CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList");
-    await collectionReference.where("SubCategory",isEqualTo: subCategory).get().then((value) {
-      value.docs.forEach((element) {
-          subCategoryId = element.id;
-      });
-    });
-    getItems();
+  getLatAndLong()async{
+    currentLocation = await Geolocator.getCurrentPosition().then((value) => value,);
+      lat = currentLocation.latitude;
+      long = currentLocation.longitude;
+      kGooglePlex = CameraPosition(
+      target: LatLng(lat, long),
+      zoom: 14.4746,
+    
+    );
+  }
+  getPosition()async{
+    currentLocation = await Geolocator.getCurrentPosition().then((value) => value);
+    print(currentLocation.latitude);
+    print(currentLocation.longitude);
   }
 
   static ProviderController of(

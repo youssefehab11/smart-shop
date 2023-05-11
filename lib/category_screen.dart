@@ -114,7 +114,7 @@ class CategoryScreenState extends State<CategoryScreen> {
                                       provider.getSubCategoryId(subCategory);
                                     });
                                     loadingItems();
-                                    Future.delayed(Duration(seconds: 3),() {
+                                    Future.delayed(const Duration(seconds: 3),() {
                                       provider.usedItems = provider.items;
                                     },);
                                     

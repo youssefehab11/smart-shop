@@ -77,7 +77,7 @@ class _MyAppState extends State<MyApp> {
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: _themeManager.themeMode,
-        home: islogin == false ? AuthScreen() : NavigationBarController(),
+        home: islogin == false ? AuthScreen() : test2(),
         routes: {
           'Login': (context) => AuthScreen(),
           'Register': (context) => RegisterScreen(),

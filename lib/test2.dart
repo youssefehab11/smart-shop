@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
-class test2 extends StatelessWidget{
-  List list =[{"id":1,"name":"ali"},{"id":3,"name":"omar"},{"id":2,"name":"kareem"}];
-  List list2 = [1,2,3,4];
+class test2 extends StatefulWidget{
+
+  @override
+  State<test2> createState() => _test2State();
+}
+
+class _test2State extends State<test2> {
+var currentLocation;
+var lat;
+
+  getPosition()async{
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      lat = position.latitude;
+    });
+    print(lat);
+    print(position.longitude);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: new Center(
-    child: new Container(
-      width: 100,
-      height: 100,
-      child: new Material(
-        child: new InkWell(
-          onTap: (){print("tapped");},
-          child: new Container(
-            width: 100.0,
-            height: 100.0,
-          ),
-        ),
-        color: Colors.transparent,
-      ),
-      color: Colors.orange,
-    ),
-  ),
+      body: Center(child: TextButton(onPressed: () async{
+         await getPosition();
+        
+      }, child: Text("Get position")),)
     );
   }
-
 }
