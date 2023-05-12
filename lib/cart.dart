@@ -119,6 +119,11 @@ class _CartState extends State<Cart> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                       color: Colors.transparent,
                       child: InkWell(onTap:() {
+                        userref.update({"Custom Country":""});
+                        userref.update({"Custom City":""});
+                        userref.update({"Custom Subcity":""});
+                        userref.update({"Custom Street":""});
+                        userref.update({"Custom Thoroughfare":""});
                         Navigator.of(context).push(SlideLeftAnimationRoute(Page: Checkout()));
                       },
                        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),

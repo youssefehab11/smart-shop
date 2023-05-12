@@ -94,12 +94,12 @@ Future<bool> _onWillPop() async {
             nextScreen: CategoryScreen());
       },
     );
-      Future.delayed(const Duration(milliseconds:3500 ),() {
+      Future.delayed(const Duration(milliseconds: 4000),() {
         Navigator.pop(context);
          setState(() {
            selectedIndex = value;
          });
-        },); 
+      },);
     }
 
     return WillPopScope(
@@ -134,7 +134,7 @@ Future<bool> _onWillPop() async {
                   provider.selectedCategoryLableColor.clear();
                   provider.selectedCategoryBackGroundColor.add(true);
                   provider.selectedCategoryLableColor.add(true);
-                  loading(1);
+                    loading(1);
                 },child: Icon(selectedIndex == 1 ? Icons.category : Icons.category_outlined,color:Theme.of(context).iconTheme.color,size: 30,),),
                 ],
               ),

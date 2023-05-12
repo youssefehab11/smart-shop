@@ -46,6 +46,7 @@ class ProviderController extends ChangeNotifier{
   var long;
   var currentLocation;
 
+  Map customAddress = {};
   
 
   void makeListItemName(List checked,List subCategory){
@@ -138,21 +139,21 @@ class ProviderController extends ChangeNotifier{
       });
     });
   }
-  getLatAndLong()async{
+  /* getLatAndLong()async{
     currentLocation = await Geolocator.getCurrentPosition().then((value) => value,);
       lat = currentLocation.latitude;
       long = currentLocation.longitude;
       kGooglePlex = CameraPosition(
-      target: LatLng(lat, long),
-      zoom: 14.4746,
+      target: LatLng(30.044420, 31.235712),
+      zoom: 8,
     
     );
-  }
-  getPosition()async{
+  } */
+   getPosition()async{
     currentLocation = await Geolocator.getCurrentPosition().then((value) => value);
     print(currentLocation.latitude);
     print(currentLocation.longitude);
-  }
+  } 
 
   static ProviderController of(
     BuildContext context, {

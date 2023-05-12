@@ -110,6 +110,9 @@ ThemeData lightTheme = ThemeData(
       fontSize: 16,
       fontWeight: FontWeight.bold
     ),
+    labelMedium: TextStyle(
+      color: Colors.black54,
+      fontSize:20,),
   ),
   backgroundColor: Colors.black,
   shadowColor: const Color.fromARGB(255, 227, 227, 227),
@@ -245,8 +248,12 @@ ThemeData darkTheme = ThemeData(
       color: Colors.white,
       fontSize: 16,
       fontWeight: FontWeight.bold
-    )
+    ),
+    labelMedium: TextStyle(
+      color: Colors.white54,
+      fontSize:20,),
   ),
+  
   backgroundColor: Colors.black,
   shadowColor: const Color.fromRGBO(33, 33, 33, 1),
   checkboxTheme: CheckboxThemeData(
