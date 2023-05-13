@@ -1,11 +1,14 @@
 
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graduationproject/transition_animation.dart';
+import 'package:lottie/lottie.dart' as loi;
 
 import 'provider_controller.dart';
 
@@ -15,8 +18,33 @@ class Address extends StatefulWidget{
 }
 
 class _AddressState extends State<Address> {
+
+  late bool serviceLocation;
+  late var locationPermission;
+
+  void loading(){
+      showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AnimatedSplashScreen(
+            disableNavigation: true,
+            splashIconSize: 150,
+            backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+            splash:
+                loi.Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+            animationDuration: const Duration(seconds: 1),
+            nextScreen: Address());
+      },
+    );
+      Future.delayed(const Duration(milliseconds: 4000),() {
+        Navigator.pop(context);
+        Navigator.of(context).push(SlideLeftAnimationRoute(Page: DefaultAddressMap()));
+      },);
+    }
+
   @override
   Widget build(BuildContext context) {
+    final provider = ProviderController.of(context);
     var user = FirebaseAuth.instance.currentUser;
       DocumentReference userref = FirebaseFirestore.instance.collection("users").doc(user!.uid);
     return Scaffold(
@@ -36,8 +64,32 @@ class _AddressState extends State<Address> {
             height: 60,
             margin: const EdgeInsets.symmetric(vertical: 10),
             child: InkWell(
-              onTap: () {
-                Navigator.of(context).push(SlideLeftAnimationRoute(Page: DefaultAddressMap()));
+              onTap: () async{
+                serviceLocation = await Geolocator.isLocationServiceEnabled(); 
+                  if(serviceLocation){
+                    locationPermission = await Geolocator.checkPermission();
+                    
+                    if(locationPermission == LocationPermission.denied){
+                        await Geolocator.requestPermission();
+                    }
+                    if(locationPermission == LocationPermission.whileInUse || locationPermission == LocationPermission.always){
+                      provider.getPosition();
+                      loading();
+                      
+                    } 
+                  }
+                  else{
+                     Fluttertoast.showToast(
+                      msg: "Activate your location",
+                      backgroundColor: Colors.black54,
+                      toastLength:Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM
+                    ); 
+                      Future.delayed(const Duration(seconds: 1),() async{
+                        await Geolocator.openLocationSettings();
+                      },);
+                  }
+                
               },
               child: Card(
                 child: Row(
@@ -61,33 +113,35 @@ class _AddressState extends State<Address> {
                     child: Center(child: Text("No address yet!")));
                 }
                 else{
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(),
-                      Padding(
-                        padding: const EdgeInsets.only(top:25,left: 8),
-                        child: Text("Name: ${snapshot.data!["First Name"]} ${snapshot.data!["Last Name"]}",
-                          style:Theme.of(context).textTheme.bodyText1),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8,left: 8),
-                        child: Text("${snapshot.data!["Default Country"]}, ${snapshot.data!["Default City"]}",
-                        style:Theme.of(context).textTheme.bodyText1),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Text("${snapshot.data!["Default Subcity"]}, ${snapshot.data!["Default Thoroughfare"]}, ${snapshot.data!["Default Street"]}",
-                        softWrap: true,
-                        style: Theme.of(context).textTheme.bodyText1
+                  return Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(),
+                        Padding(
+                          padding: const EdgeInsets.only(top:25,left: 8),
+                          child: Text("Name: ${snapshot.data!["First Name"]} ${snapshot.data!["Last Name"]}",
+                            style:Theme.of(context).textTheme.bodyText1),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top:8.0,left: 8,bottom: 25),
-                        child: Text("Phone Number: ${snapshot.data!["Phone Number"]}",
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8,left: 8),
+                          child: Text("${snapshot.data!["Default Country"]}, ${snapshot.data!["Default City"]}",
                           style:Theme.of(context).textTheme.bodyText1),
-                      ),
-                      ],);
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Text("${snapshot.data!["Default Subcity"]}, ${snapshot.data!["Default Thoroughfare"]}, ${snapshot.data!["Default Street"]}",
+                          softWrap: true,
+                          style: Theme.of(context).textTheme.bodyText1
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top:8.0,left: 8,bottom: 25),
+                          child: Text("Phone Number: ${snapshot.data!["Phone Number"]}",
+                            style:Theme.of(context).textTheme.bodyText1),
+                        ),
+                        ],),
+                  );
                 }
                 
                   } else {

@@ -412,13 +412,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 
                                             await FirebaseFirestore.instance.collection("users").doc(credential.user!.uid).set ({
-"First Name" : firstname,
-"Last Name" : lastname,
-"Phone Number" : phonenumber,
-"Email address" : _email,
-"Cart" : []
-
-
+                                              "First Name" : firstname,
+                                              "Last Name" : lastname,
+                                              "Phone Number" : phonenumber,
+                                              "Email address" : _email,
+                                              "Cart" : [],
+                                              "Custom Country":"",
+                                              "Custom City":"",
+                                              "Custom Subcity":"",
+                                              "Custom Street":"",
+                                              "Custom Thoroughfare":"",
+                                              "Default Country":"",
+                                              "Default City":"",
+                                              "Default Subcity":"",
+                                              "Default Street":"",
+                                              "Default Thoroughfare":""
                                             });
                                           } 
                                           

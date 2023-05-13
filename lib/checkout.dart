@@ -66,6 +66,7 @@ class _CheckoutState extends State<Checkout> {
                   serviceLocation = await Geolocator.isLocationServiceEnabled(); 
                   if(serviceLocation){
                     locationPermission = await Geolocator.checkPermission();
+                    
                     if(locationPermission == LocationPermission.denied){
                         await Geolocator.requestPermission();
                     }
@@ -76,11 +77,15 @@ class _CheckoutState extends State<Checkout> {
                     } 
                   }
                   else{
-                    AwesomeDialog(
-                      context: context,
-                      dialogType: DialogType.warning,
-                      title: "Please activatie your service location first"
-                      ).show();
+                     Fluttertoast.showToast(
+                      msg: "Activate your location",
+                      backgroundColor: Colors.black54,
+                      toastLength:Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM
+                    ); 
+                      Future.delayed(const Duration(seconds: 1),() async{
+                        await Geolocator.openLocationSettings();
+                      },);
                   }
                   
                 },
@@ -250,7 +255,9 @@ class _CheckoutState extends State<Checkout> {
                 child: Row(children: [
                 Text("Default location",style: Theme.of(context).textTheme.bodyText1,),
                 const Spacer(),
-                Radio(value: "Default location", groupValue: pickupLocation, onChanged: (value) {
+                Radio(
+                  activeColor:const Color.fromRGBO(198, 48, 48, 1),
+                  value: "Default location", groupValue: pickupLocation, onChanged: (value) {
                     setState(() {
                       pickupLocation = value;
                     });
@@ -270,7 +277,9 @@ class _CheckoutState extends State<Checkout> {
             child: Row(children: [
               Text("Custom location",style: Theme.of(context).textTheme.bodyText1,),
               const Spacer(),
-              Radio(value: "Custom location", groupValue: pickupLocation, onChanged: (value) {
+              Radio(
+                activeColor:const Color.fromRGBO(198, 48, 48, 1),
+                value: "Custom location", groupValue: pickupLocation, onChanged: (value) {
                 setState(() {
                   pickupLocation = value;
                 });
@@ -284,7 +293,7 @@ class _CheckoutState extends State<Checkout> {
             height: 30,
             color: Theme.of(context).colorScheme.onBackground,
             child: const Text(
-              "Address details",
+              "Address Details",
               style: TextStyle(
                fontSize: 15,
                fontWeight: FontWeight.bold,
@@ -292,7 +301,20 @@ class _CheckoutState extends State<Checkout> {
             )
           ),
           setAddress(),
-            ],),
+          ],),
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 10, top: 5),
+            width: double.infinity,
+            height: 30,
+            color: Theme.of(context).colorScheme.onBackground,
+            child: const Text(
+              "Payment Method",
+              style: TextStyle(
+               fontSize: 15,
+               fontWeight: FontWeight.bold,
+               fontFamily: "Lato",),
+            )
           ),
           
           

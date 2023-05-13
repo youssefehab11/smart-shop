@@ -1,15 +1,12 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:graduationproject/account.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/subcategory_items.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart';
 
 import 'category_screen.dart';
-import 'item_details.dart';
 
 class SearchItems extends SearchDelegate{
   
@@ -61,7 +58,7 @@ class SearchItems extends SearchDelegate{
 
     if(query.isNotEmpty){
       return  StreamBuilder(
-      stream: FirebaseFirestore.instance.collection("ProductsList").snapshots(),
+      stream: FirebaseFirestore.instance.collection("SearchList").snapshots(),
       builder: (context, snapshot) {
         if(snapshot.connectionState == ConnectionState.waiting){
           return const Center(child: CircularProgressIndicator(color: Color.fromRGBO(198, 48, 48, 1),),);
@@ -71,7 +68,7 @@ class SearchItems extends SearchDelegate{
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               var data = snapshot.data!.docs[index].data();
-              if(data["SubCategory"].toString().contains(query)||data["SubCategory"].toString().toLowerCase().contains(query)){
+              if(data["ProductName"].toString().contains(query)||data["ProductName"].toString().toLowerCase().contains(query)){
                 return Column(
                   children: [
                     SizedBox(
@@ -80,8 +77,8 @@ class SearchItems extends SearchDelegate{
                       child: InkWell(
                         onTap: () {
                           provider.items.clear();
-                          provider.subCategoryTitle = data["SubCategory"];
-                          provider.getSubCategoryId(data["SubCategory"]);
+                          provider.subCategoryTitle = data["SubCategoryName"];
+                          provider.getSubCategoryId(data["SubCategoryName"]);
                           loadingItem(); 
                           Future.delayed(const Duration(seconds: 3),() {
                             provider.usedItems = provider.items;
@@ -91,7 +88,7 @@ class SearchItems extends SearchDelegate{
                           padding: const EdgeInsets.only(left:8.0,right: 8),
                           child: Row(
                             children: [
-                              Text("${data["SubCategory"]}",style: const TextStyle(fontSize: 18),),
+                              Text("${data["ProductName"]}",style: const TextStyle(fontSize: 18),),
                               const Spacer(),
                               const Icon(Icons.arrow_forward_ios_rounded,size: 18,color: Colors.grey,)
                             ],
