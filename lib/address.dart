@@ -154,10 +154,10 @@ class _AddressState extends State<Address> {
 }
 class DefaultAddressMap extends StatefulWidget{
   @override
-  State<DefaultAddressMap> createState() => _MapsState();
+  State<DefaultAddressMap> createState() => _DefaultAddressMapState();
 }
 
-class _MapsState extends State<DefaultAddressMap> {
+class _DefaultAddressMapState extends State<DefaultAddressMap> {
   
   late GoogleMapController gmc;
   Set<Marker> currentLocation = {

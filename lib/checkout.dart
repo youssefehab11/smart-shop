@@ -39,7 +39,7 @@ class _CheckoutState extends State<Checkout> {
     );
       Future.delayed(const Duration(milliseconds: 4000),() {
         Navigator.pop(context);
-        Navigator.of(context).push(SlideLeftAnimationRoute(Page: Maps()));
+        Navigator.of(context).push(SlideLeftAnimationRoute(Page: CustomAdressMap()));
       },);
     }
 
@@ -323,12 +323,12 @@ class _CheckoutState extends State<Checkout> {
     );
   }
 }
-class Maps extends StatefulWidget{
+class CustomAdressMap extends StatefulWidget{
   @override
-  State<Maps> createState() => _MapsState();
+  State<CustomAdressMap> createState() => _CustomAdressMapState();
 }
 
-class _MapsState extends State<Maps> {
+class _CustomAdressMapState extends State<CustomAdressMap> {
   
   late GoogleMapController gmc;
   Set<Marker> currentLocation = {
