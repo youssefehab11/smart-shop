@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:graduationproject/credit_card.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart' as loi;
@@ -22,6 +22,11 @@ class Checkout extends StatefulWidget{
 class _CheckoutState extends State<Checkout> {
 
   var pickupLocation;
+  var paymentMethod;
+  late bool serviceLocation;
+  late var locationPermission;
+  double shippingFee = 20;
+  double Total = 0;
 
   void loading(){
       showDialog(
@@ -41,6 +46,149 @@ class _CheckoutState extends State<Checkout> {
         Navigator.pop(context);
         Navigator.of(context).push(SlideLeftAnimationRoute(Page: CustomAdressMap()));
       },);
+    }
+
+    Widget getTotal(){
+      final provider = ProviderController.of(context);
+      Total = provider.subtotal + shippingFee;
+      return Text("${Total.toString()} EGP",style: const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 22,
+        fontFamily: "Poppins",
+        color:Color.fromRGBO(198, 48, 48, 1)
+        ),);
+    }
+    Widget confirmation(){
+      final provider = ProviderController.of(context);
+      if(paymentMethod == null || pickupLocation == null){
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: 200,
+            height: 50,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.grey),
+                child: Material(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                  color: Colors.transparent,
+                  child: InkWell(onTap: null,
+                  customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                  child: const Center(
+                    child: Text("Confirm",
+                    style: TextStyle(fontFamily: "Poppins",fontSize: 18,color: Colors.white),),),
+                         ),
+                        ),
+                      )
+                   ),
+               );
+      }
+      else{
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: 200,
+            height: 50,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: const Color.fromRGBO(198, 48, 48, 1)),
+                child: Material(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                  color: Colors.transparent,
+                  child: InkWell(onTap: () {
+                    if(pickupLocation == "Default location" && paymentMethod == "Cash On Delivery"){
+                      if(provider.defaultAddressFlag == true){
+                        Fluttertoast.showToast(
+                          msg: "Check your inbox confirmation message",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                        Navigator.of(context).pop();
+                      }
+                      else{
+                        Fluttertoast.showToast(
+                          msg: "Add your Address first!",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                      }
+                    }
+                    if(pickupLocation == "Default location" && paymentMethod == "Pay by Card"){
+                      if(provider.defaultAddressFlag == true){
+                        if(provider.cardNumber != ""){
+                          Fluttertoast.showToast(
+                          msg: "Check your inbox confirmation message",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                        Navigator.of(context).pop();
+                        }
+                      }
+                      else{
+                        Fluttertoast.showToast(
+                          msg: "Add your Card & your Address first!",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                      }
+                    }
+                    if(pickupLocation == "Custom location" && paymentMethod == "Cash On Delivery"){
+                      if(provider.customAddressFlag == true){
+                          Fluttertoast.showToast(
+                          msg: "Check your inbox confirmation message",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                        Navigator.of(context).pop();
+                      }
+                      else{
+                        Fluttertoast.showToast(
+                          msg: "Add your Address first!",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                      }
+                    }
+                    if(pickupLocation == "Custom location" && paymentMethod == "Pay by Card"){
+                      if(provider.customAddressFlag == true){
+                        if(provider.cardNumber != ""){
+                          Fluttertoast.showToast(
+                          msg: "Check your inbox confirmation message",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                        Navigator.of(context).pop();
+                        }
+                      }
+                      else{
+                        Fluttertoast.showToast(
+                          msg: "Add your Card & your Address first!",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                      }
+                    }
+                  },
+                  customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                  child: const Center(
+                    child: Text("Confirm",
+                    style: TextStyle(fontFamily: "Poppins",fontSize: 18,color: Colors.white),),),
+                         ),
+                        ),
+                      )
+                   ),
+               );
+      }
     }
 
     Widget checkSelectedLocation(){
@@ -107,6 +255,33 @@ class _CheckoutState extends State<Checkout> {
             ],),
           );
       }
+    }
+
+    Widget checkSelectedPaymentMethod(){
+      if(paymentMethod == null){
+        return Container();
+      }
+      else if(paymentMethod == "Cash On Delivery"){
+        return Container();
+      }
+      else{
+        return InkWell(
+          onTap: () {
+            Navigator.of(context).push(SlideLeftAnimationRoute(Page: CreditCard()));
+          },
+          child: SizedBox(
+            height: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.add,size: 25,),
+                Text("Add your Card",style: Theme.of(context).textTheme.bodyText1,),
+              ],
+            ),
+          ),
+        );
+      }
+
     }
 
     Widget setAddress(){
@@ -212,9 +387,6 @@ class _CheckoutState extends State<Checkout> {
       }
     }
 
-  late bool serviceLocation;
-  late var locationPermission;
-
   //late CameraPosition kGooglePlex;
 
   @override
@@ -316,8 +488,97 @@ class _CheckoutState extends State<Checkout> {
                fontFamily: "Lato",),
             )
           ),
+          Card(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(children: [
+                Text("Cash On Delivery",style: Theme.of(context).textTheme.bodyText1,),
+                const Spacer(),
+                Radio(
+                  activeColor:const Color.fromRGBO(198, 48, 48, 1),
+                  value: "Cash On Delivery", groupValue: paymentMethod, onChanged: (value) {
+                    setState(() {
+                      paymentMethod = value;
+                    });
+                },)
+            ],),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(height: 1,width: double.infinity,color: Theme.of(context).colorScheme.onBackground,),
+              ),
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(children: [
+                  Text("Pay by Card",style: Theme.of(context).textTheme.bodyText1,),
+                  const Spacer(),
+                  Radio(
+                    activeColor:const Color.fromRGBO(198, 48, 48, 1),
+                    value: "Pay by Card", groupValue: paymentMethod, onChanged: (value) {
+                    setState(() {
+                      paymentMethod = value;
+                    });
+                  },)
+                ],),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: Row(
+                  children: [
+                    Image.asset('assets/images/Master Card.png',
+                    height: 48,
+                    width: 48,
+                    ),
+                    const SizedBox(width: 5,),
+                    Image.asset('assets/images/Visa.jpg',
+                    height: 48,
+                    width: 48,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          checkSelectedPaymentMethod(),
           
-          
+          ],),
+          ),
+          Card(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(children: [
+                  Text("Subtotal",style: Theme.of(context).textTheme.headline4,),
+                  const Spacer(),
+                  Text("${provider.subtotal.toString()} EGP",style: const TextStyle(fontSize: 18),)
+                ],),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(children: [
+                  Text("Shipping Fee",style: Theme.of(context).textTheme.headline4,),
+                  const Spacer(),
+                  Text("${shippingFee.toString()} EGP",style: const TextStyle(fontSize: 18),)
+                ],),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(height: 1,width: double.infinity,color: Theme.of(context).colorScheme.onBackground,),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(children: [
+                  Text("Total",style: Theme.of(context).textTheme.headline4),
+                  const Spacer(),
+                  getTotal(),
+                ],),
+              ),
+              confirmation(),
+            ]),
+          ) 
         ],
       ) ,
     );
@@ -377,7 +638,8 @@ class _CustomAdressMapState extends State<CustomAdressMap> {
                     backgroundColor: Colors.black54,
                     toastLength:Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM
-                  ); 
+                  );
+                  provider.customAddressFlag = true; 
                   Navigator.of(context).pop();
                 }
                 },);

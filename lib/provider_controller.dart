@@ -46,8 +46,14 @@ class ProviderController extends ChangeNotifier{
   var long;
   var currentLocation;
 
-  Map customAddress = {};
-  
+  String cardNumber ="";
+  String expiryDate ="";
+  String cardHolderName ="";
+  String cvvCode ="";
+
+  double subtotal = 0;
+  bool customAddressFlag = false;
+  bool defaultAddressFlag = false;
 
   void makeListItemName(List checked,List subCategory){
     for(int i = 0; i < checked.length; i++ ){

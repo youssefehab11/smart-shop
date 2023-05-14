@@ -135,10 +135,10 @@ ThemeData lightTheme = ThemeData(
       return const Color.fromRGBO(224, 224, 224, 1);
     },),
   ),
+  primaryColor: Colors.black
 );
 
 ThemeData darkTheme = ThemeData(
-
     inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: const Color(0x00000000),
@@ -274,5 +274,6 @@ ThemeData darkTheme = ThemeData(
       }
       return const Color.fromARGB(255, 41, 41, 41);
     },),
-  )
+  ),
+  primaryColor: Colors.white
 );

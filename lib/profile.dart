@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart';
-import 'edit profile.dart';
+import 'edit_profile.dart';
 import 'firebase_constant.dart';
 
 class Profile extends StatefulWidget {

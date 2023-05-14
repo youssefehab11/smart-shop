@@ -30,6 +30,7 @@ class _CartState extends State<Cart> {
       subtotal += element["Price"];
     });
     subtotal = double.parse((subtotal).toStringAsFixed(2));
+    provider.subtotal = double.parse((subtotal).toStringAsFixed(2));
     return Text("$subtotal EGP",style: Theme.of(context).textTheme.headline2,);
   }
 
@@ -124,6 +125,11 @@ class _CartState extends State<Cart> {
                         userref.update({"Custom Subcity":""});
                         userref.update({"Custom Street":""});
                         userref.update({"Custom Thoroughfare":""});
+                        provider.customAddressFlag = false;
+                        provider.cardNumber = "";
+                        provider.expiryDate ="";
+                        provider.cardHolderName ="";
+                        provider.cvvCode ="";
                         Navigator.of(context).push(SlideLeftAnimationRoute(Page: Checkout()));
                       },
                        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
