@@ -48,7 +48,7 @@ dependencies:
   geolocator: ^9.0.2
   google_maps_flutter: ^2.2.6
   geocoding: ^2.1.0
-  expandable: ^5.0.1
+  flutter_credit_card: ^3.0.6
 
   flutter:
     sdk: flutter
