@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:graduationproject/provider_controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ShoppingList extends StatefulWidget {
   @override

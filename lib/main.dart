@@ -1,26 +1,17 @@
-import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/auth_screen.dart';
-import 'package:graduationproject/home_screen.dart';
 import 'package:graduationproject/navigationbar_controller_screen.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/register_screen.dart';
-import 'package:graduationproject/subcategory_items.dart';
 import 'package:graduationproject/test.dart';
-import 'package:graduationproject/test0.dart';
-import 'package:graduationproject/test2.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'about.dart';
-import 'intro_screen.dart';
 import 'package:graduationproject/theme_manager';
 import 'package:graduationproject/themes.dart';
-import 'package:graduationproject/category_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'forgot_password.dart';
 import 'transition_animation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'help.dart';
 

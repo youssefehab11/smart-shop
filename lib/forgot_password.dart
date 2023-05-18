@@ -1,10 +1,10 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graduationproject/auth_screen.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'original_button.dart';
-import 'package:graduationproject/theme_manager';
-import 'package:graduationproject/themes.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -16,126 +16,152 @@ class ForgotPassword extends StatefulWidget {
 class _ForgotPasswordState extends State<ForgotPassword> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary,
-      
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
         body: SingleChildScrollView(
-            child: Padding(
-      padding: const EdgeInsets.only(top: 70.0),
-      child: Center(
-        child: Column(
-          children: [
-            Text(
-              "Forgot Password",
-              
-             style: Theme.of(context).textTheme.headline5,
-             
-             
-            ),
-            SizedBox(
-              height: 90,
-            ),
-             Text(
-              "Enter Email Address",
-              style: Theme.of(context).textTheme.headline2,
-              
-              /*style:TextStyle(
-                                                          fontSize: 18,
-                                                           fontFamily: "Lato",
-                                                           fontWeight: FontWeight.bold,
-                                                          color: Colors.black),
-
-  */
-                                                    ), 
-                           
-            
-            SizedBox(
-              height: 15,
-            ),
-            SizedBox(
-              width: 360,
-              child: Form(
-                key: _formKey,
-                child: TextFormField(
-                  onChanged: (value) => _email = value,
-                  validator: (value) {
-                    print(value);
-                    if (value!.isEmpty) {
-                      return "Please enter your email";
-                    } else if (!RegExp(
-                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                        .hasMatch(value)) {
-                      return "Please enter a valid email";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Enter your email address',
-                    hintText: 'ex: test@gmail.com',
-                    prefixIcon: const Icon(
-                      Icons.email,
-                
+            child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 70.0),
+            child: Column(
+              children: [
+                Text(
+                  "Forgot Password",
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+                SizedBox(
+                  height: 100,
+                ),
+                Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: TextFormField(
+                      onChanged: (value) => _email = value,
+                      validator: (value) {
+                        print(value);
+                        if (value!.isEmpty) {
+                          return "Please enter your email";
+                        } else if (!RegExp(
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                            .hasMatch(value)) {
+                          return "Please enter a valid email";
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Enter your email address',
+                        hintText: 'ex: test@gmail.com',
+                        prefixIcon: const Icon(
+                          Icons.email,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(ScaleAnimationRoute(Page: AuthScreen()));
-              },
-              child: Text(
-                "Back to sign in",
-                style: Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .headline3
-              
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              width: 360,
-              child: OriginalButton(
-                text: ('Send code'),
-                textColor: Colors.white,
-                bgColor: Theme.of(context).backgroundColor,
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.of(context).pushNamed('Verification');
-                  }
-                },
-              ),
-            ),
-            SizedBox(
-              height: 150,
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(ScaleAnimationRoute(Page: AuthScreen()));
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(left: 78.0),
-                child: Row(
-                  children: [
-                    Text("Don't have an account? ",
-                        style:  Theme.of(context).textTheme.headline3),
-                    Text("Sign Up ",
-                        style: Theme.of(context).textTheme.headline4),
-                  ],
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pop(ScaleAnimationRoute(Page: AuthScreen()));
+                  },
+                  child: Text("Back to sign in",
+                      style: Theme.of(context).textTheme.headline3),
                 ),
-              ),
-            )
-          ],
-        ),
-      ),
-    )));
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: OriginalButton(
+                    text: ('Reset Password'),
+                    textColor: Colors.white,
+                    bgColor: Theme.of(context).backgroundColor,
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        try {
+                          await FirebaseAuth.instance
+                              .sendPasswordResetEmail(email: _email)
+                              .then((value) => {
+                                    AwesomeDialog(
+                                      context: context,
+                                      animType: AnimType.scale,
+                                      dialogType: DialogType.success,
+                                      body: Center(
+                                        child: Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 15),
+                                          child: const Text(
+                                            "Email Sent Successfully",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                      title: 'This is Ignored',
+                                      btnOkOnPress: () {
+                                        Navigator.of(context).push(
+                                            ScaleAnimationRoute(
+                                                Page: AuthScreen()));
+
+                                        //btnOkColor: Colors.green;
+                                      },
+                                    ).show(),
+                                  });
+                        // ignore: unused_catch_clause
+                        } on FirebaseAuthException catch (e) {
+                          AwesomeDialog(
+                                  context: context,
+                                  animType: AnimType.scale,
+                                  dialogType: DialogType.error,
+                                  body: Center(
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: const Text(
+                                        "Email is not registered with us",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                  ),
+                                  title: 'This is Ignored',
+                                  btnOkOnPress: () {
+                                    Navigator.of(context).push(
+                                        ScaleAnimationRoute(
+                                            Page: AuthScreen()));
+                                  },
+                                  btnOkColor:
+                                      const Color.fromRGBO(198, 48, 48, 1))
+                              .show();
+                        }
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 150,
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pop(ScaleAnimationRoute(Page: AuthScreen()));
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Don't have an account? ",
+                          style: Theme.of(context).textTheme.headline3),
+                      Text("Sign Up ",
+                          style: Theme.of(context).textTheme.headline4),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        )));
   }
 }
 
@@ -152,35 +178,29 @@ class _VerificationState extends State<Verification> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 50.0),
           child: Column(
             children: [
-              Text(
-                "Verification",
-                style: Theme.of(context).textTheme.headline5
-              ),
+              Text("Verification",
+                  style: Theme.of(context).textTheme.headline5),
               SizedBox(
                 height: 90,
               ),
-              Text(
-                "Enter Verification Code",
-                style: Theme.of(context).textTheme.headline2
-              ),
+              Text("Enter Verification Code",
+                  style: Theme.of(context).textTheme.headline2),
               SizedBox(
                 height: 30,
               ),
               Form(
                 key: _formKey,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 45, right: 45),
-                  child: Column(
-                    children: [
-                      Row(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 45, right: 45.0),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
@@ -261,43 +281,38 @@ class _VerificationState extends State<Verification> {
                           ),
                         ],
                       ),
-                      Center(
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  "If you didn’t receive a code! ",
-                                 style: Theme.of(context).textTheme.headline3),
-                              ),
-                              Text(
-                                "Resend",
+                    ),
+                    Center(
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("If you didn’t receive a code! ",
+                                style: Theme.of(context).textTheme.headline3),
+                            Text("Resend",
                                 style: Theme.of(context).textTheme.headline4),
-                              
-                            ],
-                          ),
+                          ],
                         ),
                       ),
-                      SizedBox(
-                        height: 30,
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                      child: OriginalButton(
+                        text: ('Verify'),
+                        textColor: Colors.white,
+                        bgColor: Theme.of(context).backgroundColor,
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            Navigator.of(context).pushNamed('NewPassword');
+                          }
+                        },
                       ),
-                      SizedBox(
-                        width: 360,
-                        child: OriginalButton(
-                          text: ('Verify'),
-                          textColor: Colors.white,
-                          bgColor: Theme.of(context).backgroundColor,
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              Navigator.of(context).pushNamed('NewPassword');
-                            }
-                          },
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
             ],
@@ -317,6 +332,7 @@ class NewPassword extends StatefulWidget {
 
 class _NewPasswordState extends State<NewPassword> {
   final _formKey = GlobalKey<FormState>();
+  // ignore: unused_field
   String _password = '', _pass = '';
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
@@ -325,9 +341,7 @@ class _NewPasswordState extends State<NewPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(top: 50.0),
@@ -335,10 +349,8 @@ class _NewPasswordState extends State<NewPassword> {
             key: _formKey,
             child: Center(
               child: Column(children: [
-                Text(
-                  "New Password",
-                  style: Theme.of(context).textTheme.headline5
-                ),
+                Text("New Password",
+                    style: Theme.of(context).textTheme.headline5),
                 SizedBox(
                   height: 90,
                 ),
@@ -346,18 +358,16 @@ class _NewPasswordState extends State<NewPassword> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 25.0),
-                      child: Text(
-                        "Enter New Password",
-                        style: Theme.of(context).textTheme.headline2
-                      ),
+                      child: Text("Enter New Password",
+                          style: Theme.of(context).textTheme.headline2),
                     ),
                   ],
                 ),
                 SizedBox(
                   height: 10,
                 ),
-                SizedBox(
-                  width: 360,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: TextFormField(
                     controller: _passwordController,
                     obscureText: showPassword ? false : true,
@@ -369,7 +379,6 @@ class _NewPasswordState extends State<NewPassword> {
                       labelText: 'Password',
                       prefixIcon: const Icon(
                         Icons.lock,
-                        
                       ),
                       suffixIcon: InkWell(
                           onTap: () {
@@ -378,10 +387,10 @@ class _NewPasswordState extends State<NewPassword> {
                             });
                           },
                           child: Icon(
-                              showPassword
-                                  ? Icons.visibility_off
-                                  : Icons.remove_red_eye,
-                              )),
+                            showPassword
+                                ? Icons.visibility_off
+                                : Icons.remove_red_eye,
+                          )),
                     ),
                   ),
                 ),
@@ -392,19 +401,16 @@ class _NewPasswordState extends State<NewPassword> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 25.0),
-                      child: Text(
-                        "Confirm Password",
-
-                        style: Theme.of(context).textTheme.headline2
-                      ),
+                      child: Text("Confirm Password",
+                          style: Theme.of(context).textTheme.headline2),
                     ),
                   ],
                 ),
                 SizedBox(
-                 height: 10,
-               ),
-                SizedBox(
-                  width: 360,
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: TextFormField(
                     controller: _passController,
                     obscureText: showPass ? false : true,
@@ -416,7 +422,6 @@ class _NewPasswordState extends State<NewPassword> {
                       labelText: 'Password',
                       prefixIcon: const Icon(
                         Icons.lock,
-                        
                       ),
                       suffixIcon: InkWell(
                           onTap: () {
@@ -425,18 +430,18 @@ class _NewPasswordState extends State<NewPassword> {
                             });
                           },
                           child: Icon(
-                              showPass
-                                  ? Icons.visibility_off
-                                  : Icons.remove_red_eye,
-                              )),
+                            showPass
+                                ? Icons.visibility_off
+                                : Icons.remove_red_eye,
+                          )),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 90,
                 ),
-                SizedBox(
-                  width: 360,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: OriginalButton(
                     text: ('Submit'),
                     textColor: Colors.white,
@@ -452,6 +457,70 @@ class _NewPasswordState extends State<NewPassword> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CustomAlertDialog extends StatefulWidget {
+  const CustomAlertDialog({
+    Key? key,
+    required this.title,
+    required this.description,
+  }) : super(key: key);
+
+  final String title, description;
+
+  @override
+  _CustomAlertDialogState createState() => _CustomAlertDialogState();
+}
+
+class _CustomAlertDialogState extends State<CustomAlertDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: 15),
+          Text("${widget.title}", style: Theme.of(context).textTheme.headline4),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Text("${widget.description}",
+                style: Theme.of(context).textTheme.bodyText1),
+          ),
+          SizedBox(height: 15),
+          Divider(
+            height: 1,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 50,
+            child: InkWell(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(15.0),
+                bottomRight: Radius.circular(15.0),
+              ),
+              highlightColor: Colors.grey[200],
+              onTap: () {
+                Navigator.of(context)
+                    .push(ScaleAnimationRoute(Page: AuthScreen()));
+              },
+              child: Center(
+                child: Text(
+                  "OK",
+                  style: TextStyle(
+                      color: Color.fromRGBO(198, 48, 48, 1), fontSize: 20),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

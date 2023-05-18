@@ -1,9 +1,10 @@
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graduationproject/provider_controller.dart';
+import 'package:graduationproject/transition_animation.dart';
+import 'package:lottie/lottie.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 class itemDetails extends StatefulWidget{
@@ -16,6 +17,39 @@ class itemDetailsState extends State<itemDetails> {
   bool liked = false;
   var similarItemsLiked = [];
   int selectedPage = 0;
+
+  void loadingItem() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AnimatedSplashScreen(
+            disableNavigation: true,
+            splashIconSize: 150,
+            backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+            splash:
+                Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+            animationDuration: const Duration(seconds: 1),
+            nextScreen: itemDetails());
+      },
+    );
+    Future.delayed(
+      const Duration(milliseconds: 3000),
+      () {
+        Navigator.pop(context);
+        Navigator.of(context)
+            .push(SlideLeftAnimationRoute(Page: itemDetails()));
+      },
+    );
+  }
+  void loadingSimilarItem() {
+    
+    Future.delayed(
+      const Duration(milliseconds: 7500),
+      () {
+        
+      },
+    );
+  }
 
   Widget yellowStar(){
     return const Padding(
@@ -81,6 +115,47 @@ class itemDetailsState extends State<itemDetails> {
     }
   }
 
+  Widget checkSimilarIemsDiscount(int index){
+    final provider = ProviderController.of(context);
+    if(provider.similarItemsData[index]["Discount"] == 0){
+      return Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left:8.0,top: 5),
+            child: Text("${provider.similarItemsData[index]["Price"] } EGP",
+            style: Theme.of(context).textTheme.headline4,),
+            ),
+        ],
+      );
+    }
+    else{
+      double value = double.parse((provider.similarItemsData[index]["Price"]-(provider.similarItemsData[index]["Price"] * provider.similarItemsData[index]["Discount"]/100)).toStringAsFixed(2));
+      return  Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Text("${provider.similarItemsData[index]["Price"] } EGP",
+                style: const TextStyle(fontFamily: "Lato",fontSize: 15,decoration: TextDecoration.lineThrough),),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left:8.0,top: 2),
+                child: Text("$value EGP",
+                style: Theme.of(context).textTheme.headline4,softWrap: true,),
+              ),
+            ],
+          )
+        ],
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
      final provider = ProviderController.of(context);
@@ -98,7 +173,6 @@ class itemDetailsState extends State<itemDetails> {
             style: const TextStyle(color: Colors.white, fontSize: 25,fontFamily: "Poppins",fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
-          //elevation: 0.0,
         ),
         backgroundColor:Theme.of(context).colorScheme.onPrimaryContainer,
         body:Stack(
@@ -172,14 +246,6 @@ class itemDetailsState extends State<itemDetails> {
                     physics: const BouncingScrollPhysics(),
                     controller: scrollController,
                     child:Column(children:[
-                      /* Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20,left: 15,),
-                            child: Text(provider.itemName,style: Theme.of(context).textTheme.headline2),
-                          ),
-                        ],
-                      ), */
                       Padding(
                         padding: const EdgeInsets.only(top:8.0,),
                         child: ListTile(
@@ -188,18 +254,6 @@ class itemDetailsState extends State<itemDetails> {
                           trailing: checkItemDiscount(),
                         ),
                       ),
-                      /* Row(children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: Container(
-                            color: const Color.fromARGB(40, 198, 48, 48),
-                            child:provider.itemDiscount > 0 ?  Text(
-                            " Off ${provider.itemDiscount}%",
-                            style:Theme.of(context).textTheme.headline4,
-                            ):Container()
-                            ),
-                        ),
-                      ],), */
                       Row(
                         children:[
                           Padding(
@@ -367,111 +421,230 @@ class itemDetailsState extends State<itemDetails> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 20,left: 10,bottom: 5),
-                            child: Text("Similar Items",style: Theme.of(context).textTheme.headline2),
+                            child: provider.similarItemsNames.isEmpty? const Text("")
+                            :Text("Also Buy",style: Theme.of(context).textTheme.headline2),
                           ),
                         ],
                       ),
                       Container(
-              margin: const EdgeInsets.only(left: 15, top: 1, right: 15),
-              height: 290,
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                for(int i = 0;i<5;i++){
-                  similarItemsLiked.add(false);
-                }
-                return Row(children: [
-                  Column(
-                    children: [
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          width: 200,
-                          height: 280,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 1,
-                                    offset: const Offset(1.5, 1.5),
-                                    spreadRadius: 0.5,
-                                    color: Theme.of(context).shadowColor)
-                              ]),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(top: 10),
-                                height: 150,
-                                width: 150,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    image: const DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/Chocolates.jpg'),
-                                        fit: BoxFit.cover)),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 8, top: 15),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Description",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 8, top: 5,bottom: 5),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "EGP 0000",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                          margin: provider.similarItemsNames.isEmpty? const EdgeInsets.all(0)
+                          :const EdgeInsets.only(left: 15, top: 1, right: 15),
+                          height:provider.similarItemsNames.isEmpty? 0: 350,
+                          child: provider.similarItemsNames.isEmpty? Container()
+                            :ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: provider.similarItemsData.length,
+                            itemBuilder: (context, index) {
+                            for(int i = 0;i<provider.similarItemsData.length;i++){
+                              similarItemsLiked.add(false);
+                            }
+                            return Row(children: [
+                              Column(
                                 children: [
-                                MaterialButton(onPressed: () {
-                                
-                              },
-                              color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-                              textColor: Colors.white,
-                              child: const Text("Add to cart",style: TextStyle(fontFamily: "Lato",fontSize: 17),),
+                                  InkWell(
+                                onTap: () async{
+                                  provider.itemName = provider.similarItemsData[index]["Item Name"];
+                                  provider.itemImages = provider.similarItemsData[index]["Item Images"];
+                                  provider.stringItemPrice = provider.similarItemsData[index]["Price"].toString();
+                                  provider.doubleItemPrice = provider.similarItemsData[index]["Price"]+0.00;
+                                  provider.itemDescription = provider.similarItemsData[index]["Description"];
+                                  provider.itemQuantity = provider.similarItemsData[index]["Quantity"];
+                                  provider.itemRates = provider.similarItemsData[index]["Rates"];
+                                  provider.totalReviews = (provider.itemRates[0] + provider.itemRates[1] + provider.itemRates[2] + provider.itemRates[3] + provider.itemRates[4]);
+                                  provider.avgItemRate = (provider.itemRates[0]*1 + provider.itemRates[1]*2 + provider.itemRates[2]*3 + provider.itemRates[3]*4 + provider.itemRates[4]*5)/provider.totalReviews;
+                                  provider.numberOfItemImages = provider.itemImages.length;
+                                  provider.itemDiscount = provider.similarItemsData[index]["Discount"];
+                                  provider.priceOfDiscount = double.parse(( provider.doubleItemPrice - (provider.doubleItemPrice * provider.itemDiscount/100)).toStringAsFixed(2)); 
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AnimatedSplashScreen(
+                                          disableNavigation: true,
+                                          splashIconSize: 150,
+                                          backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+                                          splash:
+                                              Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+                                          animationDuration: const Duration(seconds: 1),
+                                          nextScreen: itemDetails());
+                                    },
+                                  );
+                                  provider.similarItemsNames = await provider.getSimilarItems(provider.similarItemsNames[index]);
+                                  provider.similarSubcategoriesNames.clear();
+                                  provider.similarSubcategoriesIds.clear();
+                                  provider.similarItemsIds.clear();
+                                  provider.similarItemsData.clear();
+                                  for(int i = 0; i < provider.similarItemsNames.length; i++){
+                                    await provider.getSimilarSubCategoriesNames(provider.similarItemsNames[i]);
+                                  }
+                                  for(int i = 0; i < provider.similarItemsNames.length; i++){
+                                    await provider.getSimilarSubCategoriesIds(provider.similarSubcategoriesNames[i]);
+                                  }
+                                  for(int i = 0; i < provider.similarItemsNames.length; i++){
+                                    await provider.getSimilarItemsIds(provider.similarSubcategoriesIds[i],provider.similarItemsNames[i]);
+                                  }
+                                  for(int i = 0; i < provider.similarItemsNames.length; i++){
+                                    await provider.getSimilarItemsData(provider.similarSubcategoriesIds[i],provider.similarItemsIds[i]);
+                                  }
+                                  provider.recommendedSubcategoriesNames.clear();
+                                  provider.recommendedSubcategoriesIds.clear();
+                                  provider.recommendedItemsIds.clear();
+                                  provider.recommendedItemsData.clear();
+                                  provider.recommendedItemsNames = await provider.getRecommendedItems(provider.similarItemsNames[index]);
+                                  print(provider.recommendedItemsNames);
+                                  for(int i = 0; i < provider.recommendedItemsNames.length; i++){
+                                    await provider.getRecommendedSubCategoriesNames(provider.recommendedItemsNames[i]);
+                                  }
+                                  for(int i = 0; i < provider.recommendedItemsNames.length; i++){
+                                    await provider.getRecommendedSubCategoriesIds(provider.recommendedSubcategoriesNames[i]);
+                                  }
+                                  for(int i = 0; i < provider.recommendedItemsNames.length; i++){
+                                    await provider.getRecommendedItemsIds(provider.recommendedSubcategoriesIds[i],provider.recommendedItemsNames[i]);
+                                  }
+                                  for(int i = 0; i < provider.recommendedItemsNames.length; i++){
+                                    await provider.getRecommendedItemsData(provider.recommendedSubcategoriesIds[i],provider.recommendedItemsIds[i]);
+                                  } 
+                                  provider.setRecommendedItems(provider.recommendedItemsData);
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.pop(context);
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.of(context).pushReplacement(SlideLeftAnimationRoute(Page: itemDetails()));
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.all(5),
+                                  width: 170,
+                                  height: 330,
+                                  decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(15),
+                                            color: Theme.of(context).colorScheme.onPrimary,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  blurRadius: 1,
+                                                  offset: const Offset(1.5, 1.5),
+                                                  spreadRadius: 0.5,
+                                                  color: Theme.of(context).shadowColor)
+                                            ]),
+                                            child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Stack(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      margin: const EdgeInsets.only(top: 10),
+                                                      height: 150,
+                                                      width: 150,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(20),
+                                                          image: DecorationImage(
+                                                              image: AssetImage('assets/images/${provider.similarItemsData[index]["Image"]}'),
+                                                              fit: BoxFit.cover)),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Positioned(  
+                                                  child: Container(
+                                                    color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                                    child:provider.similarItemsData[index]["Discount"] > 0 ?  Text(
+                                                          " - ${provider.similarItemsData[index]["Discount"]}%",
+                                                          style:Theme.of(context).textTheme.subtitle2 
+                                                        ):Container()
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(right: 8),
+                                                  child: Text(
+                                                        provider.similarItemsData[index]["Quantity"] > 0?"":"Out of stock",
+                                                        style: const TextStyle(fontSize: 15.5,color: Color.fromRGBO(198, 48, 48, 1),),
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only( top:8,left: 5,right: 5),
+                                              child: Text(
+                                                        provider.similarItemsData[index]["Description"],
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headline3,
+                                                            maxLines: 2,
+                                                            overflow: TextOverflow.ellipsis,
+                                                      ),
+                                            ),
+                                            checkSimilarIemsDiscount(index),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                              Container(
+                                                color:provider.similarItemsData[index]["Quantity"] == 0 ? Colors.grey[350]:const Color.fromRGBO(198, 48, 48, 1),
+                                                width: 100,
+                                                height: 35,
+                                                child: Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(onTap: provider.similarItemsData[index]["Quantity"] == 0 ? null :() {
+                                                  double value = double.parse((provider.similarItemsData[index]["Price"]-(provider.similarItemsData[index]["Price"] * provider.similarItemsData[index]["Discount"]/100)).toStringAsFixed(2));
+                                                  bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == provider.similarItemsData[index]["Item Name"],);
+                                              if(!foundInCart){
+                                                if(provider.similarItemsData[index]["Discount"] == 0){
+                                                    provider.cartItems.add({
+                                                      "Item Name":provider.similarItemsData[index]["Item Name"],
+                                                      "Image":provider.similarItemsData[index]["Image"],
+                                                      "Selected Quantity":provider.defaultQuantity,
+                                                      "Price":provider.similarItemsData[index]["Price"],
+                                                      "Default Price":provider.similarItemsData[index]["Price"],
+                                                      "Total Quantity":provider.similarItemsData[index]["Quantity"],
+                                                      });
+                                                }
+                                                else{
+                                                  provider.cartItems.add({
+                                                    "Item Name":provider.similarItemsData[index]["Item Name"],
+                                                    "Image":provider.similarItemsData[index]["Image"],
+                                                    "Selected Quantity":provider.defaultQuantity,
+                                                    "Price":value,
+                                                    "Default Price":value,
+                                                    "Total Quantity":provider.similarItemsData[index]["Quantity"],
+                                                  });
+                                                  }
+                                              }
+                                              Fluttertoast.showToast(
+                                                    msg: "Successfully added",
+                                                    backgroundColor: Colors.black54,
+                                                    toastLength:Toast.LENGTH_SHORT,
+                                                    gravity: ToastGravity.BOTTOM
+                                                    );
+                                                  },
+                                                  child:Center(child: provider.similarItemsData[index]["Quantity"] == 0 ? 
+                                                  Text("Sold out",style: TextStyle(color: Colors.white,fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*6),)
+                                                  :Text("Add to cart",style: TextStyle(color: Colors.white,fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*5.6),)
+                                                  ),
+                                                  ),
+                                                ),
+                                              ),
+                                              IconButton(onPressed: (() {
+                                                setState(() {
+                                                  similarItemsLiked[index] = !similarItemsLiked[index];
+                                                });
+                                              })
+                                              , icon:Icon(similarItemsLiked[index] == false? Icons.favorite_border_outlined:Icons.favorite,color: const Color.fromRGBO(198, 48, 48, 1),size: 30,) )
+                                              ],)  
+                                            ]
+                                ),
+                              ))
+                                ],
                               ),
-                              const SizedBox(width: 10,),
-                              IconButton(onPressed: (() {
-                                setState(() {
-                                  similarItemsLiked[index] = !similarItemsLiked[index];
-                                });
-                              })
-                              , icon:Icon(similarItemsLiked[index] == false? Icons.favorite_border_outlined:Icons.favorite,color: const Color.fromRGBO(198, 48, 48, 1),size: 30,) )
-                              ],)
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    width: 18,
-                  )
-                ]);
-                },
+                              Container(
+                                margin: const EdgeInsets.symmetric(vertical: 10),
+                                width: 18,
+                              )
+                            ]);
+                            },
               ))
                       ],)
                   ),

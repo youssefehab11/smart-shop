@@ -2,8 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:graduationproject/auth_form.dart';
-import 'package:graduationproject/home_screen.dart';
 import 'package:graduationproject/navigationbar_controller_screen.dart';
 import 'package:graduationproject/original_button.dart';
 import 'package:graduationproject/provider_controller.dart';
@@ -13,7 +11,6 @@ import 'package:rive/rive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:email_auth/utils/constants/firebase_constants.dart';
 //import 'package:email_auth/views/auth/email_verification_page.dart';
-import 'firebase_constant.dart';
 //import 'verification.dart';
 import 'forgot_password.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -51,6 +48,7 @@ class AuthScreenState extends State<AuthScreen> {
 
   @override
   void initState() {
+    super.initState();
     btnAnimationController = OneShotAnimation("active", autoplay: false);
   }
 

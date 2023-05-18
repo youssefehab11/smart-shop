@@ -207,7 +207,6 @@ class _DefaultAddressMapState extends State<DefaultAddressMap> {
                     toastLength:Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM
                   ); 
-                  provider.defaultAddressFlag = true;
                   Navigator.of(context).pop();
                 }
                 },);

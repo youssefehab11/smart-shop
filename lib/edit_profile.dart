@@ -94,7 +94,6 @@ class _EditProfileState extends State<EditProfile> {
                         AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
                             snapshot) {
                       if (snapshot.hasData) {
-                        var data = snapshot.data!.data();
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -184,7 +183,6 @@ class _EditProfileState extends State<EditProfile> {
                         AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
                             snapshot) {
                       if (snapshot.hasData) {
-                        var data = snapshot.data!.data();
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -274,7 +272,6 @@ class _EditProfileState extends State<EditProfile> {
                         AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
                             snapshot) {
                       if (snapshot.hasData) {
-                        var data = snapshot.data!.data();
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15.0),
                           child: TextFormField(
@@ -365,7 +362,6 @@ class _EditProfileState extends State<EditProfile> {
                         AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
                             snapshot) {
                       if (snapshot.hasData) {
-                        var data = snapshot.data!.data();
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15.0),

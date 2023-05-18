@@ -1,16 +1,11 @@
-// ignore_for_file: prefer_const_constructors
 
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart';
-
 import 'item_details.dart';
 
 class SubCategoryItems extends StatefulWidget{
@@ -23,32 +18,7 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
   List<bool> recommendationliked = [];
   
   
-
-  void loadingItem() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AnimatedSplashScreen(
-            disableNavigation: true,
-            splashIconSize: 150,
-            backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-            splash:
-                Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
-            animationDuration: const Duration(seconds: 1),
-            nextScreen: itemDetails());
-      },
-    );
-    Future.delayed(
-      const Duration(milliseconds: 3000),
-      () {
-        Navigator.pop(context);
-        Navigator.of(context)
-            .push(SlideLeftAnimationRoute(Page: itemDetails()));
-      },
-    );
-  }
-
-
+  
   Widget checkIemDiscount(int index){
     final provider = ProviderController.of(context);
     if(provider.items[index]["Discount"] == 0){
@@ -94,8 +64,6 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
   Widget build(BuildContext context) {
     
     final provider = ProviderController.of(context);
-    
-
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: true,
@@ -117,10 +85,64 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                     recommendationliked.add(false);
                   }
                   return InkWell(
-                    onTap: () {
+                    onTap: () async{
                       provider.itemName = provider.usedItems[index]["Item Name"];
                       provider.getItemId(provider.itemName);
-                      loadingItem();
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AnimatedSplashScreen(
+                            disableNavigation: true,
+                            splashIconSize: 150,
+                            backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+                            splash:
+                            Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+                            animationDuration: const Duration(seconds: 1),
+                            nextScreen: itemDetails());
+                          },
+                       );
+                      provider.similarSubcategoriesNames.clear();
+                      provider.similarSubcategoriesIds.clear();
+                      provider.similarItemsIds.clear();
+                      provider.similarItemsData.clear();
+                      provider.similarItemsNames = await provider.getSimilarItems(provider.usedItems[index]["Item Name"]);
+                      print(provider.similarItemsNames);
+                       for(int i = 0; i < provider.similarItemsNames.length; i++){
+                        await provider.getSimilarSubCategoriesNames(provider.similarItemsNames[i]);
+                      }
+                       for(int i = 0; i < provider.similarItemsNames.length; i++){
+                        await provider.getSimilarSubCategoriesIds(provider.similarSubcategoriesNames[i]);
+                      }
+                      for(int i = 0; i < provider.similarItemsNames.length; i++){
+                        await provider.getSimilarItemsIds(provider.similarSubcategoriesIds[i],provider.similarItemsNames[i]);
+                      }
+                      for(int i = 0; i < provider.similarItemsNames.length; i++){
+                        await provider.getSimilarItemsData(provider.similarSubcategoriesIds[i],provider.similarItemsIds[i]);
+                      }
+                      provider.recommendedSubcategoriesNames.clear();
+                      provider.recommendedSubcategoriesIds.clear();
+                      provider.recommendedItemsIds.clear();
+                      provider.recommendedItemsData.clear();
+                      provider.recommendedItemsNames = await provider.getRecommendedItems(provider.usedItems[index]["Item Name"]);
+                      print(provider.recommendedItemsNames);
+                       for(int i = 0; i < provider.recommendedItemsNames.length; i++){
+                        await provider.getRecommendedSubCategoriesNames(provider.recommendedItemsNames[i]);
+                      }
+                       for(int i = 0; i < provider.recommendedItemsNames.length; i++){
+                        await provider.getRecommendedSubCategoriesIds(provider.recommendedSubcategoriesNames[i]);
+                      }
+                      for(int i = 0; i < provider.recommendedItemsNames.length; i++){
+                        await provider.getRecommendedItemsIds(provider.recommendedSubcategoriesIds[i],provider.recommendedItemsNames[i]);
+                      }
+                      for(int i = 0; i < provider.recommendedItemsNames.length; i++){
+                        await provider.getRecommendedItemsData(provider.recommendedSubcategoriesIds[i],provider.recommendedItemsIds[i]);
+                      } 
+                      provider.setRecommendedItems(provider.recommendedItemsData);
+                       // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).push(SlideLeftAnimationRoute(Page: itemDetails()));
+                     // print(provider.recommendedItemsData);
                     },
                     child: Container(
                       margin: const EdgeInsets.all(5),

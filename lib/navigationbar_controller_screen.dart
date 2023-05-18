@@ -1,16 +1,15 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graduationproject/cart.dart';
 import 'package:graduationproject/category_screen.dart';
-import 'package:graduationproject/subcategory_items.dart';
-import 'package:graduationproject/test2.dart';
-import 'package:graduationproject/theme_manager';
+
+
 import 'package:graduationproject/provider_controller.dart';
-import 'package:graduationproject/transition_animation.dart';
+
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
+
 import 'main.dart';
 import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -79,7 +78,6 @@ Future<bool> _onWillPop() async {
   Widget build(BuildContext context) {
 
     final provider = ProviderController.of(context);
-
     void loading(int value){
       showDialog(
       context: context,

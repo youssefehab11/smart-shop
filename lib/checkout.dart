@@ -27,6 +27,8 @@ class _CheckoutState extends State<Checkout> {
   late var locationPermission;
   double shippingFee = 20;
   double Total = 0;
+  String defaultAddress = "";
+  
 
   void loading(){
       showDialog(
@@ -84,7 +86,7 @@ class _CheckoutState extends State<Checkout> {
                    ),
                );
       }
-      else{
+      else {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
@@ -99,7 +101,7 @@ class _CheckoutState extends State<Checkout> {
                   color: Colors.transparent,
                   child: InkWell(onTap: () {
                     if(pickupLocation == "Default location" && paymentMethod == "Cash On Delivery"){
-                      if(provider.defaultAddressFlag == true){
+                      if(defaultAddress != ""){
                         Fluttertoast.showToast(
                           msg: "Check your inbox confirmation message",
                           backgroundColor: Colors.black54,
@@ -117,8 +119,8 @@ class _CheckoutState extends State<Checkout> {
                         );
                       }
                     }
-                    if(pickupLocation == "Default location" && paymentMethod == "Pay by Card"){
-                      if(provider.defaultAddressFlag == true){
+                    else if(pickupLocation == "Default location" && paymentMethod == "Pay by Card"){
+                      if(defaultAddress != ""){
                         if(provider.cardNumber != ""){
                           Fluttertoast.showToast(
                           msg: "Check your inbox confirmation message",
@@ -128,17 +130,25 @@ class _CheckoutState extends State<Checkout> {
                         );
                         Navigator.of(context).pop();
                         }
+                        else{
+                          Fluttertoast.showToast(
+                          msg: "Add your Card first!",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                        }
                       }
                       else{
                         Fluttertoast.showToast(
-                          msg: "Add your Card & your Address first!",
+                          msg: "Add your Address first!",
                           backgroundColor: Colors.black54,
                           toastLength:Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM
                         );
                       }
                     }
-                    if(pickupLocation == "Custom location" && paymentMethod == "Cash On Delivery"){
+                    else if(pickupLocation == "Custom location" && paymentMethod == "Cash On Delivery"){
                       if(provider.customAddressFlag == true){
                           Fluttertoast.showToast(
                           msg: "Check your inbox confirmation message",
@@ -157,7 +167,7 @@ class _CheckoutState extends State<Checkout> {
                         );
                       }
                     }
-                    if(pickupLocation == "Custom location" && paymentMethod == "Pay by Card"){
+                    else{
                       if(provider.customAddressFlag == true){
                         if(provider.cardNumber != ""){
                           Fluttertoast.showToast(
@@ -168,10 +178,18 @@ class _CheckoutState extends State<Checkout> {
                         );
                         Navigator.of(context).pop();
                         }
+                        else{
+                          Fluttertoast.showToast(
+                          msg: "Add your Card first!",
+                          backgroundColor: Colors.black54,
+                          toastLength:Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM
+                        );
+                        }
                       }
                       else{
                         Fluttertoast.showToast(
-                          msg: "Add your Card & your Address first!",
+                          msg: "Add your Address first!",
                           backgroundColor: Colors.black54,
                           toastLength:Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM
@@ -392,6 +410,9 @@ class _CheckoutState extends State<Checkout> {
   @override
   Widget build(BuildContext context) {
     final provider = ProviderController.of(context);
+
+    var user = FirebaseAuth.instance;
+    DocumentReference userref = FirebaseFirestore.instance.collection("users").doc(user.currentUser!.uid);
     return Scaffold(
       appBar:AppBar(
         title: const Text(
@@ -429,7 +450,9 @@ class _CheckoutState extends State<Checkout> {
                 const Spacer(),
                 Radio(
                   activeColor:const Color.fromRGBO(198, 48, 48, 1),
-                  value: "Default location", groupValue: pickupLocation, onChanged: (value) {
+                  value: "Default location", groupValue: pickupLocation, onChanged: (value) async{
+                    await userref.get().then((value) {
+                    defaultAddress = value.get("Default Country");});
                     setState(() {
                       pickupLocation = value;
                     });

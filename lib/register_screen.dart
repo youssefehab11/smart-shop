@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:graduationproject/auth_screen.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'original_button.dart';
-import 'package:graduationproject/theme_manager';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'verification.dart';
 //import 'package:email_auth/email_auth.dart';
@@ -15,7 +14,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final ThemeManager _themeManager = ThemeManager();
   final user = FirebaseAuth.instance.currentUser;
   final credential = FirebaseAuth.instance;
 
@@ -426,7 +424,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                               "Default City":"",
                                               "Default Subcity":"",
                                               "Default Street":"",
-                                              "Default Thoroughfare":""
+                                              "Default Thoroughfare":"",
+                                              "Viewed Items":[]
                                             });
                                           } 
                                           
