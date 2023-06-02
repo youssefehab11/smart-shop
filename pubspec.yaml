@@ -50,7 +50,7 @@ dependencies:
   geocoding: ^2.1.0
   flutter_credit_card: ^3.0.6
   http: ^0.13.6
-  
+  connectivity_plus: ^4.0.1
 
   flutter:
     sdk: flutter
