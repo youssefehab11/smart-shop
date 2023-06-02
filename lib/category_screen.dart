@@ -1,5 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/subcategory_items.dart';
@@ -69,12 +70,13 @@ class CategoryScreenState extends State<CategoryScreen> {
   Widget build(BuildContext context) {
     final provider = ProviderController.of(context);
     
-    CollectionReference collectionReference = FirebaseFirestore.instance
+    
+
+    Widget pageView() {
+      CollectionReference collectionReference = FirebaseFirestore.instance
         .collection("Categories")
         .doc(provider.categoryId)
         .collection("SubCategories");
-
-    Widget pageView() {
       return Expanded(
           child: Container(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -105,6 +107,7 @@ class CategoryScreenState extends State<CategoryScreen> {
                               borderRadius: BorderRadius.circular(20),
                               child: InkWell(
                                   onTap: () {
+                                    
                                     provider.items.clear();
                                     setState(() {
                                       provider.subCategoryTitle = snapshot
@@ -154,7 +157,12 @@ class CategoryScreenState extends State<CategoryScreen> {
         centerTitle: true,
         //elevation: 0.0,
       ),
-      body: Row(
+      body:StreamBuilder(
+        initialData: provider.connectivtyResult,
+        stream: Connectivity().onConnectivityChanged,
+        builder: (context, snapshot) {
+          if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+            return  Row(
         children: [
           Container(
               //margin: EdgeInsets.symmetric(vertical: 5),
@@ -240,7 +248,27 @@ class CategoryScreenState extends State<CategoryScreen> {
           ),
           pageView()
         ],
-      ),
+      );
+          }
+          else{
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+          }
+        },)
+       
     );
   }
 }

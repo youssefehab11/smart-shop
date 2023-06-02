@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -238,6 +239,7 @@ class _CheckoutState extends State<Checkout> {
                     }
                     if(locationPermission == LocationPermission.whileInUse || locationPermission == LocationPermission.always){
                       provider.getPosition();
+                      provider.checkConnectivity();
                       loading();
                       
                     } 
@@ -425,7 +427,12 @@ class _CheckoutState extends State<Checkout> {
             ),
             centerTitle: true,
             ),
-      body:ListView(
+      body:StreamBuilder(
+        initialData: provider.connectivtyResult,
+        stream: Connectivity().onConnectivityChanged,
+        builder: (context, snapshot) {
+          if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+            return ListView(
         physics: const BouncingScrollPhysics(),
         children: [
           Container(
@@ -603,7 +610,27 @@ class _CheckoutState extends State<Checkout> {
             ]),
           ) 
         ],
-      ) ,
+      ) ;
+          }
+          else{
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+          }
+        },
+      )
     );
   }
 }
@@ -640,9 +667,12 @@ class _CustomAdressMapState extends State<CustomAdressMap> {
             ),      
             centerTitle: true,
             actions: [
-              IconButton(onPressed: () {
+              IconButton(onPressed: () async{
+                var connectivtyResult = await Connectivity().checkConnectivity();
                 Future.delayed(const Duration(milliseconds: 800),() {
-                if(placemarks.isEmpty){
+                  // ignore: unrelated_type_equality_checks
+                  if(connectivtyResult == ConnectivityResult.wifi || connectivtyResult == ConnectivityResult){
+                    if(placemarks.isEmpty){
                   Fluttertoast.showToast(
                     msg: "Please mark your address first",
                     backgroundColor: Colors.black54,
@@ -665,11 +695,25 @@ class _CustomAdressMapState extends State<CustomAdressMap> {
                   provider.customAddressFlag = true; 
                   Navigator.of(context).pop();
                 }
+                  }
+                  else{
+                    Fluttertoast.showToast(
+                    msg: "Check your connection!",
+                    backgroundColor: Colors.black54,
+                    toastLength:Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM
+                  );
+                  }
                 },);
               }, icon: const Icon(Icons.check))
             ],
           ),
-      body:SizedBox(
+      body:StreamBuilder(
+        initialData: provider.connectivtyResult,
+        stream: Connectivity().onConnectivityChanged,
+        builder: (context, snapshot) {
+          if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+            return SizedBox(
         height: MediaQuery.of(context).size.height,
         child: GoogleMap(
           mapType: MapType.normal,
@@ -694,12 +738,43 @@ class _CustomAdressMapState extends State<CustomAdressMap> {
             //print(provider.customAddress);
           },
         ),
-      ),
+      ); 
+          }
+          else{
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+          }
+        },),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(onPressed: () {
-         gmc.animateCamera(
+      floatingActionButton: FloatingActionButton(onPressed: () async{
+        var connectivityResult = await Connectivity().checkConnectivity();
+        // ignore: unrelated_type_equality_checks
+        if(connectivityResult == ConnectivityResult.wifi || connectivityResult == ConnectivityResult.mobile){
+          gmc.animateCamera(
           CameraUpdate.newCameraPosition( CameraPosition(
             target: LatLng(provider.currentLocation.latitude, provider.currentLocation.longitude),zoom:14.4746 )));
+        }
+        else{
+          Fluttertoast.showToast(
+                    msg: "Check your connection!",
+                    backgroundColor: Colors.black54,
+                    toastLength:Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM
+                  );
+        } 
       },
       backgroundColor: Colors.white,
       child: const Icon(Icons.location_searching_rounded,size: 30,),

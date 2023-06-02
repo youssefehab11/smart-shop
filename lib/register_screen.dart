@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/auth_screen.dart';
 import 'package:graduationproject/transition_animation.dart';
@@ -21,7 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   var SelectedMonth;
   var SelectedYear;
   final _formKey = GlobalKey<FormState>();
-  String _email = '', _password = '', firstname = '' , lastname = '' ;
+  String _email = '', _password = '', firstname = '', lastname = '';
   var phonenumber;
   final TextEditingController _passwordController = TextEditingController();
   bool showPassword = false;
@@ -65,18 +66,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     validator: (value) => value!.isEmpty
                                         ? 'Enter your first name'
                                         : null,
-                                    decoration:  InputDecoration(
-                                      prefixIcon: const Icon(
-                                        Icons.person,
-                                      ),
-                                      labelText:
-                                          'First Name',
-                                          labelStyle: Theme.of(context).inputDecorationTheme.labelStyle
-                                           //labelStyle: TextStyle(fontSize: 13)
-                                    ),
+                                    decoration: InputDecoration(
+                                        prefixIcon: const Icon(
+                                          Icons.person,
+                                        ),
+                                        labelText: 'First Name',
+                                        labelStyle: Theme.of(context)
+                                            .inputDecorationTheme
+                                            .labelStyle
+                                        //labelStyle: TextStyle(fontSize: 13)
+                                        ),
                                   ),
-                                   const SizedBox(
-                                   height: 10,
+                                  const SizedBox(
+                                    height: 10,
                                   ),
                                   TextFormField(
                                     onChanged: (value) => lastname = value,
@@ -95,8 +97,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     height: 10,
                                   ),
                                   TextFormField(
-                                    onChanged: (value) =>
-                                        _email = value,
+                                    onChanged: (value) => _email = value,
                                     validator: (value) {
                                       print(value);
                                       if (value!.isEmpty) {
@@ -120,13 +121,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   TextFormField(
                                     controller: _passwordController,
-                                    obscureText:
-                                        showPassword ? false : true,
-                                    onChanged: (value) =>
-                                        _password = value,
-                                    validator: (value) => value!
-                                                .length <=
-                                            6
+                                    obscureText: showPassword ? false : true,
+                                    onChanged: (value) => _password = value,
+                                    validator: (value) => value!.length <= 6
                                         ? 'Your password must be larger than 6 characters'
                                         : null,
                                     decoration: InputDecoration(
@@ -137,15 +134,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       suffixIcon: InkWell(
                                           onTap: () {
                                             setState(() {
-                                              showPassword =
-                                                  !showPassword;
+                                              showPassword = !showPassword;
                                             });
                                           },
                                           child: Icon(
                                             showPassword
                                                 ? Icons.visibility_off
-                                                : Icons
-                                                    .remove_red_eye,
+                                                : Icons.remove_red_eye,
                                           )),
                                     ),
                                   ),
@@ -153,8 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     height: 10,
                                   ),
                                   TextFormField(
-                                    onChanged: (value) =>
-                                        phonenumber = value,
+                                    onChanged: (value) => phonenumber = value,
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return "Please enter your phone number ";
@@ -176,299 +170,122 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  /* Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Container(
-                                          width: 95,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primaryContainer),
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(20)),
-                                          ),
-                                          child: DropdownButton(
-                                            underline: const Divider(
-                                              thickness: 0,
-                                            ),
-                                            hint: const Text("    DD"),
-                                            items: [
-                                              "1",
-                                              "2",
-                                              "3",
-                                              "4",
-                                              "5",
-                                              "6",
-                                              "7",
-                                              "8",
-                                              "9",
-                                              "10",
-                                              "11",
-                                              "12",
-                                              "13",
-                                              "14",
-                                              "15",
-                                              "16",
-                                              "17",
-                                              "18",
-                                              "19",
-                                              "20",
-                                              "21",
-                                              "22",
-                                              "23",
-                                              "24",
-                                              "25",
-                                              "26",
-                                              "27",
-                                              "28",
-                                              "29",
-                                              "30",
-                                              "31",
-                                            ]
-                                                .map((e) => DropdownMenuItem(
-                                                      value: e,
-                                                      child: Text(e),
-                                                    ))
-                                                .toList(),
-                                            onChanged: (val) {
-                                              setState(() {
-                                                SelectedDay = val;
-                                              });
-                                              (value) {
-                                                if (value == null) {
-                                                  return 'Relationship is required';
-                                                }
-                                              };
-                                            },
-                                            value: SelectedDay,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Container(
-                                          width: 118,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primaryContainer),
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(20)),
-                                          ),
-                                          child: DropdownButton(
-                                            underline: const Divider(
-                                              thickness: 0,
-                                            ),
-                                            hint: const Text("    MM"),
-                                            items: [
-                                              "January",
-                                              "February",
-                                              "March",
-                                              "April",
-                                              "May",
-                                              "June",
-                                              "July",
-                                              "August",
-                                              "Semptemper",
-                                              "October",
-                                              "November",
-                                              "December",
-                                            ]
-                                                .map((e) => DropdownMenuItem(
-                                                      value: e,
-                                                      child: Text(e),
-                                                    ))
-                                                .toList(),
-                                            onChanged: (val) {
-                                              setState(() {
-                                                SelectedMonth = val;
-                                              });
-                                            },
-                                            value: SelectedMonth,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Container(
-                                          width: 95,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primaryContainer),
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(20)),
-                                          ),
-                                          child: DropdownButton(
-                                            underline: const Divider(
-                                              thickness: 0,
-                                            ),
-                                            hint: const Text("    YY"),
-                                            items: [
-                                              "2000",
-                                              "2001",
-                                              "2002",
-                                              "2003",
-                                              "2004",
-                                              "2005",
-                                              "2006",
-                                              "2007",
-                                              "2008",
-                                              "2009",
-                                              "2010",
-                                              "2011",
-                                              "2012",
-                                              "2013",
-                                              "2014",
-                                              "2015",
-                                              "2016",
-                                              "2017",
-                                              "2018",
-                                              "2019",
-                                              "2020",
-                                              "2021",
-                                              "2022",
-                                              "2023",
-                                            ]
-                                                .map((e) => DropdownMenuItem(
-                                                      value: e,
-                                                      child: Text(e),
-                                                    ))
-                                                .toList(),
-                                            onChanged: (val) {
-                                              setState(() {
-                                                SelectedYear = val;
-                                              });
-                                            },
-                                            value: SelectedYear,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ), */
-
                                   Padding(
                                     padding: const EdgeInsets.only(top: 20),
                                     child: OriginalButton(
                                       text: ('Register'),
                                       textColor: Colors.white,
-                                      bgColor: Theme.of(context)
-                                          .backgroundColor,
+                                      bgColor:
+                                          Theme.of(context).backgroundColor,
                                       onPressed: () async {
-                                        if (_formKey.currentState!
-                                            .validate()) {
-                                          // Navigator.of(context).pushNamed('verification');
-
-                                          try {
-                                            final credential =
-                                                await FirebaseAuth
-                                                    .instance
-                                                    .createUserWithEmailAndPassword(
-                                                        email:
-                                                            _email.trim(),
-                                                        password:
-                                                            _password
-                                                                .trim());
-                                            await AwesomeDialog(
-                                              autoHide: const Duration(
-                                                  milliseconds: 3200),
-                                              context: context,
-                                              animType: AnimType.scale,
-                                              dialogType:
-                                                  DialogType.infoReverse,
-                                              body: Center(
-                                                child: Container(
-                                                  margin: const EdgeInsets
-                                                      .only(bottom: 15),
-                                                  child: const Text(
-                                                    "Please check your Email to verfiy your account",
-                                                    style: TextStyle(
-                                                        fontSize: 18),
+                                        final connectivityResult =
+                                            await (Connectivity()
+                                                .checkConnectivity());
+                                        if (connectivityResult ==
+                                                ConnectivityResult.wifi ||
+                                            connectivityResult ==
+                                                ConnectivityResult.mobile) {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            try {
+                                              final credential = await FirebaseAuth
+                                                  .instance
+                                                  .createUserWithEmailAndPassword(
+                                                      email: _email.trim(),
+                                                      password:
+                                                          _password.trim());
+                                              // ignore: use_build_context_synchronously
+                                              await AwesomeDialog(
+                                                autoHide: const Duration(
+                                                    milliseconds: 3200),
+                                                context: context,
+                                                animType: AnimType.scale,
+                                                dialogType:
+                                                    DialogType.infoReverse,
+                                                body: Center(
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            bottom: 15),
+                                                    child: const Text(
+                                                      "Please check your Email to verfiy your account",
+                                                      style: TextStyle(
+                                                          fontSize: 18),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              title: 'This is Ignored',
-                                              //btnOkOnPress: () {},
-                                              //btnOkColor: const Color.fromRGBO(198, 48, 48, 1)
-                                            ).show();
-                                            credential.user!
-                                                .sendEmailVerification();
-                                            Navigator.of(context).pop(
-                                                ScaleAnimationRoute(
-                                                    Page: AuthScreen()));
+                                                title: 'This is Ignored',
+                                                //btnOkOnPress: () {},
+                                                //btnOkColor: const Color.fromRGBO(198, 48, 48, 1)
+                                              ).show();
+                                              credential.user!
+                                                  .sendEmailVerification();
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.of(context).pop(
+                                                  ScaleAnimationRoute(
+                                                      Page: AuthScreen()));
 
-                                            //print (credential.user!.emailVerified);
+                                              //print (credential.user!.emailVerified);
 
-
-
-                                            await FirebaseFirestore.instance.collection("users").doc(credential.user!.uid).set ({
-                                              "First Name" : firstname,
-                                              "Last Name" : lastname,
-                                              "Phone Number" : phonenumber,
-                                              "Email address" : _email,
-                                              "Cart" : [],
-                                              "Custom Country":"",
-                                              "Custom City":"",
-                                              "Custom Subcity":"",
-                                              "Custom Street":"",
-                                              "Custom Thoroughfare":"",
-                                              "Default Country":"",
-                                              "Default City":"",
-                                              "Default Subcity":"",
-                                              "Default Street":"",
-                                              "Default Thoroughfare":"",
-                                              "Viewed Items":[]
-                                            });
-                                          } 
-                                          
-                                          
-                                          
-                                          
-                                          
-                                          on FirebaseAuthException catch (e) {
-                                            if (e.code ==
-                                                'weak-password') {
-                                              print(
-                                                  'The password provided is too weak.');
-                                            } else if (e.code ==
-                                                'email-already-in-use') {
-                                              print(
-                                                  'The account already exists for that email.');
+                                              await FirebaseFirestore.instance
+                                                  .collection("users")
+                                                  .doc(credential.user!.uid)
+                                                  .set({
+                                                "First Name": firstname,
+                                                "Last Name": lastname,
+                                                "Phone Number": phonenumber,
+                                                "Email address": _email,
+                                                "Cart": [],
+                                                "Custom Country": "",
+                                                "Custom City": "",
+                                                "Custom Subcity": "",
+                                                "Custom Street": "",
+                                                "Custom Thoroughfare": "",
+                                                "Default Country": "",
+                                                "Default City": "",
+                                                "Default Subcity": "",
+                                                "Default Street": "",
+                                                "Default Thoroughfare": "",
+                                                "Viewed Items": []
+                                              });
+                                            } on FirebaseAuthException catch (e) {
+                                              if (e.code == 'weak-password') {
+                                                print(
+                                                    'The password provided is too weak.');
+                                              } else if (e.code ==
+                                                  'email-already-in-use') {
+                                                print(
+                                                    'The account already exists for that email.');
+                                              }
+                                              return null;
+                                            } catch (e) {
+                                              print(e);
+                                              return null;
                                             }
-                                            return null;
-
-                                            /*isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
-                                    
-                                    if (!isEmailVerified ) {
-                                       
-                                      sendVerificationEmail();
-                                    
-                                    
-                                    }
-                                    Future sendVerificationEmail() async {
-                                    try {
-                                    final user = FirebaseAuth.instance.currentUser!; 
-                                    await user.sendEmailVerification();
-                                    }
-                                     catch (e) {
-                                    Utils.showSnackBar(e.toString());
-                                     }
-                                    
-                                    }
-                                                    
-                                       */
-                                          } catch (e) {
-                                            print(e);
-                                            return null;
                                           }
+                                        } else {
+                                          // ignore: use_build_context_synchronously
+                                          AwesomeDialog(
+                                            autoHide: const Duration(
+                                                milliseconds: 2500),
+                                            context: context,
+                                            animType: AnimType.scale,
+                                            dialogType: DialogType.error,
+                                            body: Center(
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 15),
+                                                child: const Text(
+                                                  "No internet connection",
+                                                  style: TextStyle(
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ),
+                                            title: 'This is Ignored',
+                                          ).show();
                                         }
                                       },
                                     ),
@@ -478,7 +295,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       Navigator.of(context).pop();
                                     },
                                     child: Padding(
-                                      padding: const EdgeInsets.only(bottom : 15.0),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 15.0),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,

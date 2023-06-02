@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,68 +80,93 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     textColor: Colors.white,
                     bgColor: Theme.of(context).backgroundColor,
                     onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        try {
-                          await FirebaseAuth.instance
-                              .sendPasswordResetEmail(email: _email)
-                              .then((value) => {
-                                    AwesomeDialog(
-                                      context: context,
-                                      animType: AnimType.scale,
-                                      dialogType: DialogType.success,
-                                      body: Center(
-                                        child: Container(
-                                          margin:
-                                              const EdgeInsets.only(bottom: 15),
-                                          child: const Text(
-                                            "Email Sent Successfully",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
+                      final connectivityResult =
+                          await (Connectivity().checkConnectivity());
+                      if (connectivityResult == ConnectivityResult.wifi ||
+                          connectivityResult == ConnectivityResult.mobile) {
+                        if (_formKey.currentState!.validate()) {
+                          try {
+                            await FirebaseAuth.instance
+                                .sendPasswordResetEmail(email: _email)
+                                .then((value) => {
+                                      AwesomeDialog(
+                                        context: context,
+                                        animType: AnimType.scale,
+                                        dialogType: DialogType.success,
+                                        body: Center(
+                                          child: Container(
+                                            margin: const EdgeInsets.only(
+                                                bottom: 15),
+                                            child: const Text(
+                                              "Email Sent Successfully",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      title: 'This is Ignored',
-                                      btnOkOnPress: () {
-                                        Navigator.of(context).push(
-                                            ScaleAnimationRoute(
-                                                Page: AuthScreen()));
+                                        title: 'This is Ignored',
+                                        btnOkOnPress: () {
+                                          Navigator.of(context).push(
+                                              ScaleAnimationRoute(
+                                                  Page: AuthScreen()));
 
-                                        //btnOkColor: Colors.green;
-                                      },
-                                    ).show(),
-                                  });
-                        // ignore: unused_catch_clause
-                        } on FirebaseAuthException catch (e) {
-                          AwesomeDialog(
-                                  context: context,
-                                  animType: AnimType.scale,
-                                  dialogType: DialogType.error,
-                                  body: Center(
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      child: const Text(
-                                        "Email is not registered with us",
-                                        style: TextStyle(fontSize: 18),
+                                          //btnOkColor: Colors.green;
+                                        },
+                                      ).show(),
+                                    });
+                            // ignore: unused_catch_clause
+                          } on FirebaseAuthException catch (e) {
+                            // ignore: use_build_context_synchronously
+                            AwesomeDialog(
+                                    context: context,
+                                    animType: AnimType.scale,
+                                    dialogType: DialogType.error,
+                                    body: Center(
+                                      child: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: const Text(
+                                          "Email is not registered with us",
+                                          style: TextStyle(fontSize: 18),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  title: 'This is Ignored',
-                                  btnOkOnPress: () {
-                                    Navigator.of(context).push(
-                                        ScaleAnimationRoute(
-                                            Page: AuthScreen()));
-                                  },
-                                  btnOkColor:
-                                      const Color.fromRGBO(198, 48, 48, 1))
-                              .show();
+                                    title: 'This is Ignored',
+                                    btnOkOnPress: () {
+                                      Navigator.of(context).push(
+                                          ScaleAnimationRoute(
+                                              Page: AuthScreen()));
+                                    },
+                                    btnOkColor:
+                                        const Color.fromRGBO(198, 48, 48, 1))
+                                .show();
+                          }
                         }
+                      } else {
+                        // ignore: use_build_context_synchronously
+                        AwesomeDialog(
+                          autoHide: const Duration(milliseconds: 2500),
+                          context: context,
+                          animType: AnimType.scale,
+                          dialogType: DialogType.error,
+                          body: Center(
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 15),
+                              child: const Text(
+                                "No internet connection",
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          title: 'This is Ignored',
+                        ).show();
                       }
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 150,
                 ),
                 TextButton(

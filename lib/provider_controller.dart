@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -75,6 +76,9 @@ class ProviderController extends ChangeNotifier{
   String recommendedSubCategoryName = "";
   String recommendedSubCategoryId = "";
   String recommendedItemId = "";
+
+  var connectivtyResult;
+  
 
   void makeListItemName(List checked,List subCategory){
     for(int i = 0; i < checked.length; i++ ){
@@ -312,6 +316,9 @@ class ProviderController extends ChangeNotifier{
       
       //getItemDetail();
     });
+  }
+  checkConnectivity()async{
+    connectivtyResult = await Connectivity().checkConnectivity(); 
   }
 
 

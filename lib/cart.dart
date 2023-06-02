@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/checkout.dart';
@@ -50,7 +51,12 @@ class _CartState extends State<Cart> {
           ),
           centerTitle: true,
         ),
-          body: provider.cartItems.isEmpty? Center(
+          body: StreamBuilder(
+            initialData: provider.connectivtyResult,
+            stream: Connectivity().onConnectivityChanged,
+            builder: (context, snapshot) {
+              if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+                return provider.cartItems.isEmpty? Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -130,6 +136,7 @@ class _CartState extends State<Cart> {
                         provider.expiryDate ="";
                         provider.cardHolderName ="";
                         provider.cvvCode ="";
+                        provider.checkConnectivity();
                         Navigator.of(context).push(SlideLeftAnimationRoute(Page: Checkout()));
                       },
                        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
@@ -185,9 +192,9 @@ class _CartState extends State<Cart> {
                       background: Container(
                         height: 72,
                         color: const Color.fromRGBO(198, 48, 48, 1),
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             ListTile(
                               trailing: Icon(
                               Icons.delete_rounded,
@@ -291,6 +298,26 @@ class _CartState extends State<Cart> {
                     );
                   },),
             ],
+          );
+              }
+              else{
+                return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+              }
+            },
           )
     );
   }

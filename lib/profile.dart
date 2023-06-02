@@ -1,6 +1,8 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart';
 import 'edit_profile.dart';
@@ -16,6 +18,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
+    final provider = ProviderController.of(context); 
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
@@ -30,7 +33,12 @@ class _ProfileState extends State<Profile> {
           ),
           centerTitle: true,
         ),
-        body: Stack(
+        body: StreamBuilder(
+          initialData: provider.connectivtyResult,
+          stream: Connectivity().onConnectivityChanged,
+          builder: (context, snapshot) {
+            if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+              return Stack(
           children: [
             Container(
               width: double.infinity,
@@ -50,7 +58,27 @@ class _ProfileState extends State<Profile> {
             ),
             Scroll(),
           ],
-        ));
+        );
+            }
+            else{
+              return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+            }
+          },
+    ));
   }
 }
 
@@ -224,59 +252,63 @@ Scroll() {
                               child: Text("Last Name",
                                   style: Theme.of(context).textTheme.headline6),
                             ),
-                            StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                            StreamBuilder<
+                                    DocumentSnapshot<Map<String, dynamic>>>(
                                 stream: FirebaseFirestore.instance
-      .collection("users")
-      .doc(auth.currentUser!.uid)
-      .snapshots(),
-                                builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+                                    .collection("users")
+                                    .doc(auth.currentUser!.uid)
+                                    .snapshots(),
+                                builder: (context,
+                                    AsyncSnapshot<
+                                            DocumentSnapshot<
+                                                Map<String, dynamic>>>
+                                        snapshot) {
                                   if (snapshot.hasData) {
-                                                                              var data = snapshot.data!.data();
+                                    var data = snapshot.data!.data();
 
-                                    return  Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 15.0),
-                                            child: TextFormField(
-                                                readOnly: true,
-                                                controller: TextEditingController(text: data!['Last Name']),
-
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .labelMedium,
-                                                decoration: InputDecoration(
-                                                  filled: true, //<-- SEE HERE
-                                                  fillColor: Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary,
-                                                  enabledBorder:
-                                                      const UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  focusedBorder:
-                                                      const UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  disabledBorder:
-                                                      const UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  errorBorder:
-                                                      const UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  focusedErrorBorder:
-                                                      const UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Colors.grey),
-                                                  ),
-                                                )),
-                                          );
-                                        }
-                                   else {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0),
+                                      child: TextFormField(
+                                          readOnly: true,
+                                          controller: TextEditingController(
+                                              text: data!['Last Name']),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium,
+                                          decoration: InputDecoration(
+                                            filled: true, //<-- SEE HERE
+                                            fillColor: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                            enabledBorder:
+                                                const UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey),
+                                            ),
+                                            focusedBorder:
+                                                const UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey),
+                                            ),
+                                            disabledBorder:
+                                                const UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey),
+                                            ),
+                                            errorBorder:
+                                                const UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey),
+                                            ),
+                                            focusedErrorBorder:
+                                                const UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey),
+                                            ),
+                                          )),
+                                    );
+                                  } else {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 15.0),
@@ -328,62 +360,58 @@ Scroll() {
                     ),
                     StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                         stream: FirebaseFirestore.instance
-      .collection("users")
-      .doc(auth.currentUser!.uid)
-      .snapshots(),
-                        builder:
-                            (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+                            .collection("users")
+                            .doc(auth.currentUser!.uid)
+                            .snapshots(),
+                        builder: (context,
+                            AsyncSnapshot<
+                                    DocumentSnapshot<Map<String, dynamic>>>
+                                snapshot) {
                           if (snapshot.hasData) {
                             var data = snapshot.data!.data();
-                            return  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0),
-                                    child: TextFormField(
-                                        readOnly: true,
-                                       controller: TextEditingController(text: data!['Phone Number']),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium,
-                                        decoration: InputDecoration(
-                                          filled: true, //<-- SEE HERE
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15.0),
+                              child: TextFormField(
+                                  readOnly: true,
+                                  controller: TextEditingController(
+                                      text: data!['Phone Number']),
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                  decoration: InputDecoration(
+                                    filled: true, //<-- SEE HERE
 
-                                          fillColor: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
+                                    fillColor:
+                                        Theme.of(context).colorScheme.onPrimary,
 
-                                          enabledBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
+                                    enabledBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
 
-                                          focusedBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
 
-                                          disabledBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
+                                    disabledBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
 
-                                          errorBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
+                                    errorBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
 
-                                          focusedErrorBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
-                                        )),
-                                  );
-                                }
-                           else {
+                                    focusedErrorBorder:
+                                        const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
+                                  )),
+                            );
+                          } else {
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 20.0),
@@ -433,63 +461,59 @@ Scroll() {
                           style: Theme.of(context).textTheme.headline6),
                     ),
                     StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                        stream:FirebaseFirestore.instance
-      .collection("users")
-      .doc(auth.currentUser!.uid)
-      .snapshots(),
-                        builder:
-                            (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+                        stream: FirebaseFirestore.instance
+                            .collection("users")
+                            .doc(auth.currentUser!.uid)
+                            .snapshots(),
+                        builder: (context,
+                            AsyncSnapshot<
+                                    DocumentSnapshot<Map<String, dynamic>>>
+                                snapshot) {
                           if (snapshot.hasData) {
                             var data = snapshot.data!.data();
                             return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0),
-                                    child: TextFormField(
-                                        readOnly: true,
-                                        controller: TextEditingController(text: data!['Email address']),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium,
-                                        decoration: InputDecoration(
-                                          filled: true, //<-- SEE HERE
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15.0),
+                              child: TextFormField(
+                                  readOnly: true,
+                                  controller: TextEditingController(
+                                      text: data!['Email address']),
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                  decoration: InputDecoration(
+                                    filled: true, //<-- SEE HERE
 
-                                          fillColor: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
+                                    fillColor:
+                                        Theme.of(context).colorScheme.onPrimary,
 
-                                          enabledBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
+                                    enabledBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
 
-                                          focusedBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
 
-                                          disabledBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
+                                    disabledBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
 
-                                          errorBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
+                                    errorBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
 
-                                          focusedErrorBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
-                                          ),
-                                        )),
-                                  );
-                                }
-                           else {
+                                    focusedErrorBorder:
+                                        const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
+                                  )),
+                            );
+                          } else {
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 20.0),
@@ -552,5 +576,3 @@ Scroll() {
             ));
       });
 }
-
-

@@ -2,6 +2,7 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -90,13 +91,14 @@ class HomePageState extends State<HomePage> {
                          ),
                       child: InkWell(
                         onTap: () {
+                          provider.checkConnectivity();
                           showSearch(context: context, delegate: SearchItems());
                         },
                         customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        child: const Padding(
+                          padding:  EdgeInsets.all(8.0),
                           child: Row(
-                          children: const[
+                          children: [
                              Icon(
                               Icons.search,
                               color: Colors.black,
@@ -135,7 +137,12 @@ class HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: ListView(
+      body: StreamBuilder(
+        initialData: provider.connectivtyResult,
+        stream: Connectivity().onConnectivityChanged,
+        builder: (context, snapshot) {
+          if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+            return ListView(
         physics: const BouncingScrollPhysics(),
         children: [
           CarouselSlider(
@@ -217,6 +224,7 @@ class HomePageState extends State<HomePage> {
                     margin: const EdgeInsets.symmetric(horizontal: 5),
                     child: TextButton(
                         onPressed: () {
+                          provider.checkConnectivity();
                           Navigator.of(context).push(SlideLeftAnimationRoute(Page: RecommendedItems()));
                         },
                         child: const Text(
@@ -305,6 +313,7 @@ class HomePageState extends State<HomePage> {
                                     await provider.getRecommendedItemsData(provider.recommendedSubcategoriesIds[i],provider.recommendedItemsIds[i]);
                                   } 
                                   provider.setRecommendedItems(provider.recommendedItemsData);
+                                  provider.checkConnectivity();
                                   // ignore: use_build_context_synchronously
                                   Navigator.pop(context);
                                   // ignore: use_build_context_synchronously
@@ -390,7 +399,7 @@ class HomePageState extends State<HomePage> {
                                                   color: Colors.transparent,
                                                   child: InkWell(onTap: snapshot.data!["Viewed Items"][index]["Quantity"] == 0 ? null :() {
                                                   double value = double.parse((snapshot.data!["Viewed Items"][index]["Price"]-(snapshot.data!["Viewed Items"][index]["Price"] * snapshot.data!["Viewed Items"][index]["Discount"]/100)).toStringAsFixed(2));
-                                                  bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == snapshot.data!.get("Item Name"),);
+                                                  bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == snapshot.data!["Viewed Items"][index]["Item Name"],);
                                               if(!foundInCart){
                                                 if(snapshot.data!["Viewed Items"][index]["Discount"] == 0){
                                                     provider.cartItems.add({
@@ -428,6 +437,14 @@ class HomePageState extends State<HomePage> {
                                                 ),
                                               ),
                                               IconButton(onPressed: (() {
+                                                provider.cartItems.add({
+                                                      "Item Name":snapshot.data!["Viewed Items"][index]["Item Name"],
+                                                      "Image":snapshot.data!["Viewed Items"][index]["Image"],
+                                                      "Selected Quantity":provider.defaultQuantity,
+                                                      "Price":snapshot.data!["Viewed Items"][index]["Price"],
+                                                      "Default Price":snapshot.data!["Viewed Items"][index]["Price"],
+                                                      "Total Quantity":snapshot.data!["Viewed Items"][index]["Quantity"],
+                                                      });
                                                 setState(() {
                                                   recommendedItemsLiked[index] = !recommendedItemsLiked[index];
                                                 });
@@ -583,7 +600,26 @@ class HomePageState extends State<HomePage> {
                 },
               )),
         ],
-      ),
+      );
+          }
+          else{
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+          }
+      },)
     );
   }
 }

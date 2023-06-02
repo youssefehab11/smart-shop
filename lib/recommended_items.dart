@@ -1,5 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -72,7 +73,12 @@ class _RecommendedItemsState extends State<RecommendedItems> {
             style: TextStyle(color: Colors.white, fontSize: 25,fontFamily: "Poppins",fontWeight: FontWeight.bold),
           ),
         ),
-        body:  StreamBuilder(
+        body:StreamBuilder(
+          initialData: provider.connectivtyResult,
+          stream: Connectivity().onConnectivityChanged,
+          builder: (context, snapshot) {
+            if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+              return StreamBuilder(
           stream: userref.snapshots(),
           builder: (context, snapshot) {
             if(snapshot.hasData){
@@ -142,6 +148,7 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                     await provider.getRecommendedItemsData(provider.recommendedSubcategoriesIds[i],provider.recommendedItemsIds[i]);
                                   } 
                                   provider.setRecommendedItems(provider.recommendedItemsData);
+                                  provider.checkConnectivity();
                                   // ignore: use_build_context_synchronously
                                   Navigator.pop(context);
                                   // ignore: use_build_context_synchronously
@@ -227,7 +234,7 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                             color: Colors.transparent,
                                             child: InkWell(onTap: snapshot.data!["Viewed Items"][index]["Quantity"] == 0 ? null :() {
                                             double value = double.parse((snapshot.data!["Viewed Items"][index]["Price"]-(snapshot.data!["Viewed Items"][index]["Price"] * snapshot.data!["Viewed Items"][index]["Discount"]/100)).toStringAsFixed(2));
-                                            bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == snapshot.data!.get("Item Name"),);
+                                            bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == snapshot.data!["Viewed Items"][index]["Item Name"],);
                                         if(!foundInCart){
                                           if(snapshot.data!["Viewed Items"][index]["Discount"] == 0){
                                               provider.cartItems.add({
@@ -282,7 +289,27 @@ class _RecommendedItemsState extends State<RecommendedItems> {
             }
             
           },
-        ),
+        );
+            }
+            else{
+              return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+            }
+          },
+        )
     );
   }
 }

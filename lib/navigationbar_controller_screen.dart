@@ -105,6 +105,7 @@ Future<bool> _onWillPop() async {
       onWillPop: _onWillPop,
       child: Scaffold(
         floatingActionButton:FloatingActionButton(onPressed: (){
+          provider.checkConnectivity();
           setState(() {
             selectedIndex = 2;
           });
@@ -120,6 +121,7 @@ Future<bool> _onWillPop() async {
                   //provider.x.clear();
                   //print(provider.x);
                   provider.flag = 0;
+                  provider.checkConnectivity();
                   loading(0);
                 },child: Icon(selectedIndex == 0 ? Icons.home : Icons.home_outlined,color:Theme.of(context).iconTheme.color,size: 30,),),
                 MaterialButton(onPressed: (){
@@ -128,6 +130,7 @@ Future<bool> _onWillPop() async {
                   provider.flag = 1;
                   provider.category = "Oil & Masala";
                   provider.getCategoryId(provider.category);
+                  provider.checkConnectivity();
                   provider.selectedCategoryBackGroundColor.clear();
                   provider.selectedCategoryLableColor.clear();
                   provider.selectedCategoryBackGroundColor.add(true);
@@ -139,6 +142,7 @@ Future<bool> _onWillPop() async {
               const Spacer(),
               Row(children: [
                 MaterialButton(onPressed: (){
+                  provider.checkConnectivity();
                   setState(() {
                     selectedIndex = 3;
                   });

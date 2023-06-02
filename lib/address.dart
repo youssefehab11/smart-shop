@@ -1,6 +1,7 @@
 
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -59,7 +60,12 @@ class _AddressState extends State<Address> {
           ),
           centerTitle: true,
         ),
-        body: Column(children: [
+        body: StreamBuilder(
+          initialData: provider.connectivtyResult,
+          stream: Connectivity().onConnectivityChanged,
+          builder: (context, snapshot) {
+            if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+              return Column(children: [
           Container(
             height: 60,
             margin: const EdgeInsets.symmetric(vertical: 10),
@@ -148,7 +154,27 @@ class _AddressState extends State<Address> {
                     return const Text("");
                   }
           },)
-        ],),
+        ],);
+            }
+            else{
+              return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+            }
+          },
+        )
     );
   }
 }
@@ -170,9 +196,6 @@ class _DefaultAddressMapState extends State<DefaultAddressMap> {
     var user = FirebaseAuth.instance.currentUser;
     DocumentReference userref = FirebaseFirestore.instance.collection("users").doc(user!.uid);
     final provider = ProviderController.of(context);
-/*     lat = provider.lat;
-    lng = provider.long;
-    provider.long; */
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -185,9 +208,11 @@ class _DefaultAddressMapState extends State<DefaultAddressMap> {
             ),      
             centerTitle: true,
             actions: [
-              IconButton(onPressed: () {
+              IconButton(onPressed: () async{
+                var connectivtyResult = await Connectivity().checkConnectivity();
                 Future.delayed(const Duration(milliseconds: 800),() {
-                if(placemarks.isEmpty){
+                  if(connectivtyResult == ConnectivityResult.wifi || connectivtyResult == ConnectivityResult.mobile){
+                    if(placemarks.isEmpty){
                   Fluttertoast.showToast(
                     msg: "Please mark your address first",
                     backgroundColor: Colors.black54,
@@ -209,11 +234,26 @@ class _DefaultAddressMapState extends State<DefaultAddressMap> {
                   ); 
                   Navigator.of(context).pop();
                 }
+                  }
+                   else{
+                    Fluttertoast.showToast(
+                    msg: "Check your connection!",
+                    backgroundColor: Colors.black54,
+                    toastLength:Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM
+                  );
+                  }
+                
                 },);
               }, icon: const Icon(Icons.check))
             ],
           ),
-      body:SizedBox(
+      body:StreamBuilder(
+        initialData: provider.connectivtyResult,
+        stream: Connectivity().onConnectivityChanged,
+        builder: (context, snapshot) {
+          if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+            return SizedBox(
         height: MediaQuery.of(context).size.height,
         child: GoogleMap(
           mapType: MapType.normal,
@@ -231,19 +271,46 @@ class _DefaultAddressMapState extends State<DefaultAddressMap> {
               currentLocation.add(Marker(markerId: const MarkerId("1"),position: LatLng(argument.latitude, argument.longitude)));
             });
             placemarks = await placemarkFromCoordinates(argument.latitude,argument.longitude);
-            /* provider.customAddress.addAll({
-              "country":placemarks[0].country,
-              "administrativeArea":placemarks[0].administrativeArea,
-            }); */
-            //print(provider.customAddress);
           },
         ),
+      );
+          }
+          else{
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+          }
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(onPressed: () {
-         gmc.animateCamera(
+      floatingActionButton: FloatingActionButton(onPressed: () async{
+        var connectivityResult = await Connectivity().checkConnectivity();
+        // ignore: unrelated_type_equality_checks
+        if(connectivityResult == ConnectivityResult.wifi || connectivityResult == ConnectivityResult.mobile){
+          gmc.animateCamera(
           CameraUpdate.newCameraPosition( CameraPosition(
             target: LatLng(provider.currentLocation.latitude, provider.currentLocation.longitude),zoom:14.4746 )));
+        }
+        else{
+          Fluttertoast.showToast(
+                    msg: "Check your connection!",
+                    backgroundColor: Colors.black54,
+                    toastLength:Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM
+                  );
+        } 
       },
       backgroundColor: Colors.white,
       child: const Icon(Icons.location_searching_rounded,size: 30,),

@@ -1,6 +1,8 @@
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:graduationproject/provider_controller.dart';
 
 import 'firebase_constant.dart';
 
@@ -46,6 +48,7 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = ProviderController.of(context);
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
         appBar: AppBar(
@@ -60,7 +63,12 @@ class _EditProfileState extends State<EditProfile> {
           ),
           centerTitle: true,
         ),
-        body: SingleChildScrollView(
+        body:StreamBuilder(
+          initialData: provider.connectivtyResult,
+          stream: Connectivity().onConnectivityChanged,
+          builder: (context, snapshot) {
+            if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+              return SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
@@ -457,7 +465,28 @@ class _EditProfileState extends State<EditProfile> {
               ],
             ),
           ),
-        ));
+        );
+            }
+            else{
+              return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            ); 
+            }
+          },
+        )
+      );
   }
 }
 

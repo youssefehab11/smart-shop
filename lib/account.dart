@@ -1,8 +1,10 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/address.dart';
 import 'package:graduationproject/profile.dart';
+import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart';
 
@@ -40,6 +42,7 @@ class _AccountState extends State<Account> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = ProviderController.of(context);
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -53,7 +56,12 @@ class _AccountState extends State<Account> {
           ),
           centerTitle: true,
         ),
-        body: SingleChildScrollView(
+        body:StreamBuilder(
+          initialData: provider.connectivtyResult,
+          stream: Connectivity().onConnectivityChanged,
+          builder: (context, snapshot) {
+            if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+              return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
@@ -80,6 +88,7 @@ class _AccountState extends State<Account> {
                     ),
                   ),
                   onTap: () {
+                    provider.checkConnectivity();
                     loading();
                   },
                 ),
@@ -308,7 +317,28 @@ class _AccountState extends State<Account> {
               ),
             ],
           ),
-        ));
+        );
+            }
+            else{
+              return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+            }
+          },
+        )  
+      );
   }
 }
 

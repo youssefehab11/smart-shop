@@ -1,5 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/subcategory_items.dart';
@@ -55,8 +56,12 @@ class SearchItems extends SearchDelegate{
       },
     );
   }
-
-    if(query.isNotEmpty){
+  return StreamBuilder(
+    initialData: provider.connectivtyResult,
+    stream: Connectivity().onConnectivityChanged,
+    builder: (context, snapshot) {
+      if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
+        if(query.isNotEmpty){
       return  StreamBuilder(
       stream: FirebaseFirestore.instance.collection("SearchList").snapshots(),
       builder: (context, snapshot) {
@@ -108,6 +113,27 @@ class SearchItems extends SearchDelegate{
     else{
       return Container();
     }
+      }
+      else{
+        return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Image(image: AssetImage("assets/images/No Connection.jpg")),
+                ),
+                SizedBox(height: 10,),
+                Text("Whoops!",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),),
+                SizedBox(height: 5,),
+                Text("No internet connection found! check your connection please.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),)
+              ],
+            );
+      }
+    },
+  );
+    
   }
 
 }
