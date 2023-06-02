@@ -1,4 +1,6 @@
 
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -14,6 +16,8 @@ import 'package:lottie/lottie.dart' as loi;
 import 'provider_controller.dart';
 
 class Address extends StatefulWidget{
+  const Address({super.key});
+
   @override
   State<Address> createState() => _AddressState();
 }
@@ -34,12 +38,12 @@ class _AddressState extends State<Address> {
             splash:
                 loi.Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
             animationDuration: const Duration(seconds: 1),
-            nextScreen: Address());
+            nextScreen: const Address());
       },
     );
       Future.delayed(const Duration(milliseconds: 4000),() {
         Navigator.pop(context);
-        Navigator.of(context).push(SlideLeftAnimationRoute(Page: DefaultAddressMap()));
+        Navigator.of(context).push(SlideLeftAnimationRoute(Page: const DefaultAddressMap()));
       },);
     }
 
@@ -123,7 +127,7 @@ class _AddressState extends State<Address> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(),
+                        const Row(),
                         Padding(
                           padding: const EdgeInsets.only(top:25,left: 8),
                           child: Text("Name: ${snapshot.data!["First Name"]} ${snapshot.data!["Last Name"]}",
@@ -179,6 +183,8 @@ class _AddressState extends State<Address> {
   }
 }
 class DefaultAddressMap extends StatefulWidget{
+  const DefaultAddressMap({super.key});
+
   @override
   State<DefaultAddressMap> createState() => _DefaultAddressMapState();
 }

@@ -116,7 +116,6 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                   provider.similarItemsIds.clear();
                                   provider.similarItemsData.clear();
                                   provider.similarItemsNames = await provider.getSimilarItems(provider.itemName);
-                                  print(provider.similarItemsNames);
                                   for(int i = 0; i < provider.similarItemsNames.length; i++){
                                     await provider.getSimilarSubCategoriesNames(provider.similarItemsNames[i]);
                                   }
@@ -134,7 +133,6 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                   provider.recommendedItemsIds.clear();
                                   provider.recommendedItemsData.clear();
                                   provider.recommendedItemsNames = await provider.getRecommendedItems(provider.itemName);
-                                  print(provider.recommendedItemsNames);
                                   for(int i = 0; i < provider.recommendedItemsNames.length; i++){
                                     await provider.getRecommendedSubCategoriesNames(provider.recommendedItemsNames[i]);
                                   }

@@ -1,4 +1,6 @@
 
+// ignore_for_file: avoid_print
+
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +17,8 @@ import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   State<HomePage> createState() => HomePageState();
 }
@@ -281,7 +285,6 @@ class HomePageState extends State<HomePage> {
                                   provider.similarItemsIds.clear();
                                   provider.similarItemsData.clear();
                                   provider.similarItemsNames = await provider.getSimilarItems(provider.itemName);
-                                  print(provider.similarItemsNames);
                                   for(int i = 0; i < provider.similarItemsNames.length; i++){
                                     await provider.getSimilarSubCategoriesNames(provider.similarItemsNames[i]);
                                   }
@@ -299,7 +302,6 @@ class HomePageState extends State<HomePage> {
                                   provider.recommendedItemsIds.clear();
                                   provider.recommendedItemsData.clear();
                                   provider.recommendedItemsNames = await provider.getRecommendedItems(provider.itemName);
-                                  print(provider.recommendedItemsNames);
                                   for(int i = 0; i < provider.recommendedItemsNames.length; i++){
                                     await provider.getRecommendedSubCategoriesNames(provider.recommendedItemsNames[i]);
                                   }

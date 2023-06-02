@@ -1,4 +1,6 @@
 
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,6 +27,7 @@ var _initialPhoneNumber = '';
 final _formKey = GlobalKey<FormState>();
 
 class _EditProfileState extends State<EditProfile> {
+  @override
   void initState() {
     super.initState();
 
@@ -448,6 +451,7 @@ class _EditProfileState extends State<EditProfile> {
                             });
                           }
 
+                          // ignore: use_build_context_synchronously
                           await showCustomDialog(context);
                         }
                       },
@@ -513,25 +517,23 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 15),
-          // Text("${widget.title}", style: Theme.of(context).textTheme.headline4),
-          // SizedBox(height: 10),
+          const SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: Center(
-              child: Text("${widget.description}",
+              child: Text(widget.description,
                   style: Theme.of(context).textTheme.bodyText1),
             ),
           ),
-          SizedBox(height: 15),
-          Divider(
+          const SizedBox(height: 15),
+          const Divider(
             height: 1,
           ),
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width,
             height: 40,
             child: InkWell(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(15.0),
                 bottomRight: Radius.circular(15.0),
               ),
@@ -540,7 +542,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                 int count = 0;
                 Navigator.of(context).popUntil((_) => count++ >= 3);
               },
-              child: Center(
+              child: const Center(
                 child: Text(
                   "OK",
                   style: TextStyle(

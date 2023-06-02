@@ -112,7 +112,6 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                       provider.similarItemsIds.clear();
                       provider.similarItemsData.clear();
                       provider.similarItemsNames = await provider.getSimilarItems(provider.usedItems[index]["Item Name"]);
-                      print(provider.similarItemsNames);
                        for(int i = 0; i < provider.similarItemsNames.length; i++){
                         await provider.getSimilarSubCategoriesNames(provider.similarItemsNames[i]);
                       }
@@ -130,7 +129,6 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                       provider.recommendedItemsIds.clear();
                       provider.recommendedItemsData.clear();
                       provider.recommendedItemsNames = await provider.getRecommendedItems(provider.usedItems[index]["Item Name"]);
-                      print(provider.recommendedItemsNames);
                        for(int i = 0; i < provider.recommendedItemsNames.length; i++){
                         await provider.getRecommendedSubCategoriesNames(provider.recommendedItemsNames[i]);
                       }

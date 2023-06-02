@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names
+
 import 'dart:async';
 
 import 'package:animated_splash_screen/animated_splash_screen.dart';
@@ -15,6 +17,7 @@ import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart' as loi;
 
 class Checkout extends StatefulWidget{
+  const Checkout({super.key});
 
   @override
   State<Checkout> createState() => _CheckoutState();
@@ -42,7 +45,7 @@ class _CheckoutState extends State<Checkout> {
             splash:
                 loi.Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
             animationDuration: const Duration(seconds: 1),
-            nextScreen: Checkout());
+            nextScreen: const Checkout());
       },
     );
       Future.delayed(const Duration(milliseconds: 4000),() {
@@ -328,7 +331,7 @@ class _CheckoutState extends State<Checkout> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(),
+                      const Row(),
                       Padding(
                         padding: const EdgeInsets.only(top:25,left: 8),
                         child: Text("Name: ${snapshot.data!["First Name"]} ${snapshot.data!["Last Name"]}",
@@ -374,7 +377,7 @@ class _CheckoutState extends State<Checkout> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(),
+                      const Row(),
                       Padding(
                         padding: const EdgeInsets.only(top:25,left: 8),
                         child: Text("Name: ${snapshot.data!["First Name"]} ${snapshot.data!["Last Name"]}",
@@ -406,8 +409,6 @@ class _CheckoutState extends State<Checkout> {
           },);
       }
     }
-
-  //late CameraPosition kGooglePlex;
 
   @override
   Widget build(BuildContext context) {
@@ -635,6 +636,8 @@ class _CheckoutState extends State<Checkout> {
   }
 }
 class CustomAdressMap extends StatefulWidget{
+  const CustomAdressMap({super.key});
+
   @override
   State<CustomAdressMap> createState() => _CustomAdressMapState();
 }
@@ -670,8 +673,7 @@ class _CustomAdressMapState extends State<CustomAdressMap> {
               IconButton(onPressed: () async{
                 var connectivtyResult = await Connectivity().checkConnectivity();
                 Future.delayed(const Duration(milliseconds: 800),() {
-                  // ignore: unrelated_type_equality_checks
-                  if(connectivtyResult == ConnectivityResult.wifi || connectivtyResult == ConnectivityResult){
+                  if(connectivtyResult == ConnectivityResult.wifi || connectivtyResult == ConnectivityResult.mobile){
                     if(placemarks.isEmpty){
                   Fluttertoast.showToast(
                     msg: "Please mark your address first",
@@ -731,11 +733,6 @@ class _CustomAdressMapState extends State<CustomAdressMap> {
               currentLocation.add(Marker(markerId: const MarkerId("1"),position: LatLng(argument.latitude, argument.longitude)));
             });
             placemarks = await placemarkFromCoordinates(argument.latitude,argument.longitude);
-            /* provider.customAddress.addAll({
-              "country":placemarks[0].country,
-              "administrativeArea":placemarks[0].administrativeArea,
-            }); */
-            //print(provider.customAddress);
           },
         ),
       ); 

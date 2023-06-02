@@ -15,6 +15,8 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 
 class AuthScreen extends StatefulWidget {
   final user = FirebaseAuth.instance;
+
+  AuthScreen({super.key});
   @override
   State<AuthScreen> createState() => AuthScreenState();
 }
@@ -412,22 +414,6 @@ class AuthScreenState extends State<AuthScreen> {
                                                                                     );
                                                                                   }
                                                                                 }
-
-                                                                                //check
-                                                                                // .fire();
-                                                                                //// Future
-                                                                                // .delayed(
-                                                                                //Duration(
-                                                                                //   seconds:
-                                                                                //       2),
-                                                                                // () {
-                                                                                //   setState(
-                                                                                //      () {
-                                                                                //   isShowLoading =
-                                                                                //     false;
-                                                                                // });
-                                                                                // },
-                                                                                //);
                                                                               } else {
                                                                                 error.fire();
                                                                                 Future.delayed(
@@ -626,13 +612,13 @@ class CustomPosintioned extends StatelessWidget {
     return Positioned.fill(
       child: Column(
         children: [
-          Spacer(),
+          const Spacer(),
           SizedBox(
             height: size,
             width: size,
             child: child,
           ),
-          Spacer(
+          const Spacer(
             flex: 1,
           ),
         ],

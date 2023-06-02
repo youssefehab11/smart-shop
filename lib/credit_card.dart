@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graduationproject/provider_controller.dart';
 
 class CreditCard extends StatefulWidget {
+  const CreditCard({super.key});
   @override
   State<CreditCard> createState() => _CreditCard();
 }

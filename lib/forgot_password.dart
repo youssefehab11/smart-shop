@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, library_private_types_in_public_api
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,7 +34,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   "Forgot Password",
                   style: Theme.of(context).textTheme.headline5,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 100,
                 ),
                 Form(
@@ -52,10 +54,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Enter your email address',
                         hintText: 'ex: test@gmail.com',
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.email,
                         ),
                       ),
@@ -70,7 +72,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   child: Text("Back to sign in",
                       style: Theme.of(context).textTheme.headline3),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Padding(
@@ -110,8 +112,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                           Navigator.of(context).push(
                                               ScaleAnimationRoute(
                                                   Page: AuthScreen()));
-
-                                          //btnOkColor: Colors.green;
                                         },
                                       ).show(),
                                     });
@@ -212,12 +212,12 @@ class _VerificationState extends State<Verification> {
             children: [
               Text("Verification",
                   style: Theme.of(context).textTheme.headline5),
-              SizedBox(
+              const SizedBox(
                 height: 90,
               ),
               Text("Enter Verification Code",
                   style: Theme.of(context).textTheme.headline2),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Form(
@@ -322,7 +322,7 @@ class _VerificationState extends State<Verification> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     Padding(
@@ -377,7 +377,7 @@ class _NewPasswordState extends State<NewPassword> {
               child: Column(children: [
                 Text("New Password",
                     style: Theme.of(context).textTheme.headline5),
-                SizedBox(
+                const SizedBox(
                   height: 90,
                 ),
                 Row(
@@ -389,7 +389,7 @@ class _NewPasswordState extends State<NewPassword> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Padding(
@@ -420,7 +420,7 @@ class _NewPasswordState extends State<NewPassword> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -432,7 +432,7 @@ class _NewPasswordState extends State<NewPassword> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Padding(
@@ -463,7 +463,7 @@ class _NewPasswordState extends State<NewPassword> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 90,
                 ),
                 Padding(
@@ -512,23 +512,23 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 15),
-          Text("${widget.title}", style: Theme.of(context).textTheme.headline4),
-          SizedBox(height: 10),
+          const SizedBox(height: 15),
+          Text(widget.title, style: Theme.of(context).textTheme.headline4),
+          const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text("${widget.description}",
+            child: Text(widget.description,
                 style: Theme.of(context).textTheme.bodyText1),
           ),
-          SizedBox(height: 15),
-          Divider(
+          const SizedBox(height: 15),
+          const Divider(
             height: 1,
           ),
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width,
             height: 50,
             child: InkWell(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(15.0),
                 bottomRight: Radius.circular(15.0),
               ),
@@ -537,7 +537,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                 Navigator.of(context)
                     .push(ScaleAnimationRoute(Page: AuthScreen()));
               },
-              child: Center(
+              child: const Center(
                 child: Text(
                   "OK",
                   style: TextStyle(

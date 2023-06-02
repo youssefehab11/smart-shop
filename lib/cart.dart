@@ -7,6 +7,8 @@ import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
 
 class Cart extends StatefulWidget{
+   const Cart({super.key});
+
   @override
   State<Cart> createState() => _CartState();
 }
@@ -102,12 +104,8 @@ class _CartState extends State<Cart> {
                         getSubTotal(),
                       ],
                     ),
-                    //Text("Items: ${provider.cartItems.length}",style: Theme.of(context).textTheme.bodyText2,)
                   ],
-                ),
-
-                //const Spacer(),
-                
+                ),  
               ],),
             ),
           ),

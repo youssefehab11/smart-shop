@@ -19,6 +19,8 @@ class itemDetailsState extends State<itemDetails> {
   var similarItemsLiked = [];
   int selectedPage = 0;
 
+  List bngrb = ['Galaxy Chocolate', 'Toast','Masala', ];
+
   void loadingItem() {
     showDialog(
       context: context,
@@ -475,6 +477,7 @@ class itemDetailsState extends State<itemDetails> {
                                           nextScreen: itemDetails());
                                     },
                                   );
+                                  provider.recommendedItemsNames = await provider.getRecommendedItems(provider.similarItemsNames[index]);
                                   provider.similarItemsNames = await provider.getSimilarItems(provider.similarItemsNames[index]);
                                   provider.similarSubcategoriesNames.clear();
                                   provider.similarSubcategoriesIds.clear();
@@ -496,8 +499,7 @@ class itemDetailsState extends State<itemDetails> {
                                   provider.recommendedSubcategoriesIds.clear();
                                   provider.recommendedItemsIds.clear();
                                   provider.recommendedItemsData.clear();
-                                  provider.recommendedItemsNames = await provider.getRecommendedItems(provider.similarItemsNames[index]);
-                                  print(provider.recommendedItemsNames);
+                                  
                                   for(int i = 0; i < provider.recommendedItemsNames.length; i++){
                                     await provider.getRecommendedSubCategoriesNames(provider.recommendedItemsNames[i]);
                                   }

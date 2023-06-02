@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graduationproject/transition_animation.dart';
 
-
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
@@ -35,13 +34,16 @@ class AboutPage extends StatelessWidget {
                         child: Text("Terms and Conditions",
                             style: Theme.of(context).textTheme.headline6),
                       ),
-                      const Icon(Icons.keyboard_arrow_right,size:30,),
+                      const Icon(
+                        Icons.keyboard_arrow_right,
+                        size: 30,
+                      ),
                     ],
                   ),
                 ),
                 onTap: () {
                   Navigator.of(context).push(SlideLeftAnimationRoute(
-                  Page: const TermsAndConditions()));
+                      Page: const TermsAndConditions()));
                 },
               ),
             ),
@@ -64,25 +66,23 @@ class AboutPage extends StatelessWidget {
                         child: Text("Privacy Policy",
                             style: Theme.of(context).textTheme.headline6),
                       ),
-                      const Icon(Icons.keyboard_arrow_right,size:30,),
+                      const Icon(
+                        Icons.keyboard_arrow_right,
+                        size: 30,
+                      ),
                     ],
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).push(SlideLeftAnimationRoute(
-                  Page: const PrivacyPolicy()));
+                  Navigator.of(context).push(
+                      SlideLeftAnimationRoute(Page: const PrivacyPolicy()));
                 },
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 20),
-              child: Container(
-                child: Text("App Version 12.2.0",
-                    style: Theme.of(context).textTheme.headline3),
-                // color: _themeManager.themeMode == ThemeMode.dark
-                //   ? Colors.grey[800]
-                //  : Colors.grey[300],
-              ),
+              child: Text("App Version 12.2.0",
+                  style: Theme.of(context).textTheme.headline3),
             )
           ],
         ));
@@ -156,7 +156,7 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
                     Column(
                       children: [
                         Container(
-                          color:Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.onBackground,
                           child: ExpansionTile(
                             title: Text("Our Delivery Service",
                                 style: Theme.of(context).textTheme.headline4),
@@ -187,7 +187,7 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
                     Column(
                       children: [
                         Container(
-                          color:Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.onBackground,
                           child: ExpansionTile(
                             title: Text("Price and Availability",
                                 style: Theme.of(context).textTheme.headline4),
@@ -255,7 +255,7 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
                                 style: Theme.of(context).textTheme.headline4),
                             children: [
                               Container(
-                                color:Theme.of(context).colorScheme.outline,
+                                color: Theme.of(context).colorScheme.outline,
                                 child: ListTile(
                                   title: Text(
                                       "You are responsible for, and agree to pay promptly, all charges to your account, including applicable taxes and purchases by you or anyone you allow to use your credit card. You agree and accept responsibility for keeping all your account information current, including name, credit card information, telephone number, and e-mail address. You can update your information anytime that you place an order. You agree that you will not provide fraudulent information and that you are solely responsible for any information you provide to us. You will comply with all laws applicable to your activities on the site and with this agreement. Our secure server encrypts your credit card information, among other things so that it cannot be read as the information travels over the internet. Once we receive your credit card information, it is stored in our secure data center. S-mart will exercise commercially reasonable efforts to ensure that your credit card information remains confidential at all times. When our order form asks users to enter sensitive information, such as a credit card number, that information is encrypted and is protected with encryption software.",
@@ -351,7 +351,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                                 style: Theme.of(context).textTheme.headline4),
                             children: [
                               Container(
-                                color:Theme.of(context).colorScheme.outline,
+                                color: Theme.of(context).colorScheme.outline,
                                 child: ListTile(
                                   title: Text(
                                       "While using our service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information may include, but is not limited to:\n1. Email address\n2. First name and last name\n3. Phone number\n4.Usage Data",
@@ -413,7 +413,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                                 style: Theme.of(context).textTheme.headline4),
                             children: [
                               Container(
-                                color:Theme.of(context).colorScheme.outline,
+                                color: Theme.of(context).colorScheme.outline,
                                 child: ListTile(
                                   title: Text(
                                       "The application will retain your personal data only for as long as is necessary for the purposes set out in this privacy policy. We will retain and use your personal data to the extent necessary to comply with our legal obligations (for example, if we are required to retain your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.",
@@ -444,7 +444,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                                 style: Theme.of(context).textTheme.headline4),
                             children: [
                               Container(
-                                color:Theme.of(context).colorScheme.outline,
+                                color: Theme.of(context).colorScheme.outline,
                                 child: ListTile(
                                   title: Text(
                                       "You have the right to delete or request that we assist in deleting the personal data that we have collected about you.\nOur service may give you the ability to delete certain information about you from within the service.\nYou may update, amend, or delete your information at any time by signing in to your account, if you have one, and visiting the account settings section that allows you to manage your personal information. You may also contact us to request access to, correct, or delete any personal information that you have provided to us.\nPlease note, however, that we may need to retain certain information when we have a legal obligation or lawful basis to do so.",
@@ -500,7 +500,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                     Column(
                       children: [
                         Container(
-                          color:Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.onBackground,
                           child: ExpansionTile(
                             title: Text("Childern's Privacy ",
                                 style: Theme.of(context).textTheme.headline4),
@@ -532,7 +532,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                     Column(
                       children: [
                         Container(
-                          color:Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.onBackground,
                           child: ExpansionTile(
                             title: Text("Changes to this Privacy Policy ",
                                 style: Theme.of(context).textTheme.headline4),

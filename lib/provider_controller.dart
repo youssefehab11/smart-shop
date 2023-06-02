@@ -1,5 +1,6 @@
-import 'dart:convert';
+// ignore_for_file: non_constant_identifier_names, avoid_print, prefer_typing_uninitialized_variables
 
+import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -122,26 +123,26 @@ class ProviderController extends ChangeNotifier{
   getCategoryId(String category)async{
   CollectionReference collectionReference = FirebaseFirestore.instance.collection("Categories");
   await collectionReference.where("CategoryName" ,isEqualTo: category).get().then((value) {
-    value.docs.forEach((element) {
+    for (var element in value.docs) {
       categoryId = element.id;
-    }); 
+    } 
   },);
 }
   getSubCategoryId(String subCategory)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList");
     await collectionReference.where("SubCategory",isEqualTo: subCategory).get().then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
           subCategoryId = element.id;
-      });
+      }
       getItems();
     });
   }
   getItemId(String name)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList").doc(subCategoryId).collection("Items");
     await collectionReference.where("Item Name",isEqualTo: name).get().then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
           itemId = element.id;
-      });
+      }
       getItemDetail();
     });
   }
@@ -168,6 +169,8 @@ class ProviderController extends ChangeNotifier{
     var response = await http.get(url);
     var responseBody = jsonDecode(response.body);
     x.addAll(responseBody);
+    print("====================== Also Buy ==============================");
+    print(x);
     return x;
   }
   Future<List> getRecommendedItems(String itemName)async{
@@ -176,15 +179,18 @@ class ProviderController extends ChangeNotifier{
     var response = await http.get(url);
     var responseBody = jsonDecode(response.body);
     x.addAll(responseBody);
+    print("====================== Recommended Items ==============================");
+    print(x);
     return x;
+    
   }
 
   getItems()async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList").doc(subCategoryId).collection("Items");
     await collectionReference.get().then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         items.add(element.data());
-      });
+      }
     });
   }
    getPosition()async{
@@ -196,27 +202,27 @@ class ProviderController extends ChangeNotifier{
   getSimilarSubCategoriesNames(String SimilarItemName)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("SearchList");
     await collectionReference.where("ProductName" ,isEqualTo: SimilarItemName).get().then((value){
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         similarSubcategoriesNames.add(element["SubCategoryName"]);
-      });
+      }
     });
   }
 
   getSimilarSubCategoriesIds(String SimilarSubcategoryName)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList");
     await collectionReference.where("SubCategory" ,isEqualTo: SimilarSubcategoryName).get().then((value){
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         similarSubcategoriesIds.add(element.id);
-      });
+      }
     });
   }
 
   getSimilarItemsIds(String similarSubcategoryId, String SimilarItemName)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList").doc(similarSubcategoryId).collection("Items");
     await collectionReference.where("Item Name",isEqualTo: SimilarItemName).get().then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         similarItemsIds.add(element.id);
-      });
+      }
     });
   }
   getSimilarItemsData(String similarSubcategoryId, String similarItemsId)async{
@@ -224,33 +230,32 @@ class ProviderController extends ChangeNotifier{
     await documentReference.get().then((value){
       similarItemsData.add(value.data());
     });
-  
   }
 
   getRecommendedSubCategoriesNames(String recommendedItemName)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("SearchList");
     await collectionReference.where("ProductName" ,isEqualTo: recommendedItemName).get().then((value){
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         recommendedSubcategoriesNames.add(element["SubCategoryName"]);
-      });
+      }
     });
   }
 
   getRecommendedSubCategoriesIds(String recommendedSubcategoryName)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList");
     await collectionReference.where("SubCategory" ,isEqualTo: recommendedSubcategoryName).get().then((value){
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         recommendedSubcategoriesIds.add(element.id);
-      });
+      }
     });
   }
 
   getRecommendedItemsIds(String recommendedSubcategoryId, String recommendedItemName)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList").doc(recommendedSubcategoryId).collection("Items");
     await collectionReference.where("Item Name",isEqualTo: recommendedItemName).get().then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         recommendedItemsIds.add(element.id);
-      });
+      }
     });
   }
   getRecommendedItemsData(String recommendedSubcategoryId, String recommendedItemsId)async{
@@ -258,7 +263,6 @@ class ProviderController extends ChangeNotifier{
     await documentReference.get().then((value){
       recommendedItemsData.add(value.data());
     });
-  
   }
   
   setRecommendedItems(List rec)async{
@@ -291,30 +295,26 @@ class ProviderController extends ChangeNotifier{
   getRecommendedSubCategoryName(String name)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("SearchList");
     await collectionReference.where("ProductName",isEqualTo: name).get().then((value){
-       value.docs.forEach((element) {
+       for (var element in value.docs) {
         recommendedSubCategoryName = element["SubCategoryName"];
-       });
+       }
     });
   }
   
   getRecommendedSubCategoryId(String name)async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList");
     await collectionReference.where("SubCategory",isEqualTo: name).get().then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
           subCategoryId = element.id;
-      });
+      }
     });
-    
-    //getRecommendedItemId();
   }
   getRecommendedItemId()async{
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList").doc(subCategoryId).collection("Items");
     await collectionReference.where("Item Name",isEqualTo: itemName).get().then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
           itemId = element.id;
-      });
-      
-      //getItemDetail();
+      }
     });
   }
   checkConnectivity()async{

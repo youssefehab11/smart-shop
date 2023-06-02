@@ -8,6 +8,8 @@ import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart';
 
 class CategoryScreen extends StatefulWidget {
+  const CategoryScreen({super.key});
+
   @override
   State<CategoryScreen> createState() => CategoryScreenState();
 }
@@ -37,7 +39,7 @@ class CategoryScreenState extends State<CategoryScreen> {
             splash:
                 Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
             animationDuration: const Duration(seconds: 1),
-            nextScreen: CategoryScreen());
+            nextScreen: const CategoryScreen());
       },
     );
   }
@@ -53,7 +55,7 @@ class CategoryScreenState extends State<CategoryScreen> {
             splash:
                 Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
             animationDuration: const Duration(seconds: 1),
-            nextScreen: CategoryScreen());
+            nextScreen: const CategoryScreen());
       },
     );
     Future.delayed(
@@ -69,8 +71,6 @@ class CategoryScreenState extends State<CategoryScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = ProviderController.of(context);
-    
-    
 
     Widget pageView() {
       CollectionReference collectionReference = FirebaseFirestore.instance
@@ -99,8 +99,6 @@ class CategoryScreenState extends State<CategoryScreen> {
                             height: 135,
                             width: 135,
                             decoration: BoxDecoration(
-                                //border: Border.all(color: Colors.grey,width: 2),
-
                                 borderRadius: BorderRadius.circular(20),
                                 color: Theme.of(context).colorScheme.onPrimary),
                             child: ClipRRect(
@@ -165,11 +163,9 @@ class CategoryScreenState extends State<CategoryScreen> {
             return  Row(
         children: [
           Container(
-              //margin: EdgeInsets.symmetric(vertical: 5),
               width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width*0.72,
               height: double.infinity,
               decoration: BoxDecoration(
-                //borderRadius:BorderRadius.only(topRight:Radius.circular(20),bottomRight:Radius.circular(20)) ,
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
               child: ListView.builder(
@@ -210,7 +206,6 @@ class CategoryScreenState extends State<CategoryScreen> {
                                 }
                                 provider.selectedCategoryLableColor[index] =
                                     !provider.selectedCategoryLableColor[index];
-                                //selectedIndex = 0;
                               });
                             },
                           );
@@ -228,7 +223,6 @@ class CategoryScreenState extends State<CategoryScreen> {
                             ),
                             padding: const EdgeInsets.only(
                                 top: 10, right: 5, left: 8),
-                            // margin: EdgeInsets.only(top: 10),
                             child: Text(categories[index],
                                 style: TextStyle(
                                     fontFamily: "Poppins",
