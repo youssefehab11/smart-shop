@@ -123,15 +123,23 @@ class ShoppingListState extends State<ShoppingList> {
               margin: const EdgeInsets.only(left: 30),
               child: Row(
                 children:  [
-                   Text(provider.budget,style:const TextStyle(fontSize: 30,fontFamily: "Poppins")),
+                   Text("${provider.budget}",style:const TextStyle(fontSize: 25,fontFamily: "Poppins")),
                const SizedBox(width: 5,),
-               const Text("EGP",style: TextStyle(fontSize: 30,fontFamily: "Poppins"),)
+               const Text("EGP",style: TextStyle(fontSize: 25,fontFamily: "Poppins"),)
                 ],
               ),
             )
           ],),
           ListTile(trailing: MaterialButton(onPressed: (){
-            provider.saveValue(budget.text);
+            if(budget.text.isEmpty){
+              setState(() {
+                provider.budget = 0;
+              });
+            }
+            else{
+              provider.saveValue(double.parse(budget.text));
+            }
+            
           },
           color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
           textColor: Colors.white,

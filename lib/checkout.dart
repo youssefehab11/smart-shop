@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, use_build_context_synchronously
 
 import 'dart:async';
 
@@ -12,6 +12,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graduationproject/credit_card.dart';
+import 'package:graduationproject/navigationbar_controller_screen.dart';
 import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart' as loi;
@@ -57,6 +58,7 @@ class _CheckoutState extends State<Checkout> {
     Widget getTotal(){
       final provider = ProviderController.of(context);
       Total = provider.subtotal + shippingFee;
+      Total = double.parse((Total).toStringAsFixed(2));
       return Text("${Total.toString()} EGP",style: const TextStyle(
         fontWeight: FontWeight.w600,
         fontSize: 22,
@@ -103,7 +105,7 @@ class _CheckoutState extends State<Checkout> {
                 child: Material(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                   color: Colors.transparent,
-                  child: InkWell(onTap: () {
+                  child: InkWell(onTap: () async{
                     if(pickupLocation == "Default location" && paymentMethod == "Cash On Delivery"){
                       if(defaultAddress != ""){
                         Fluttertoast.showToast(
@@ -112,7 +114,27 @@ class _CheckoutState extends State<Checkout> {
                           toastLength:Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM
                         );
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AnimatedSplashScreen(
+                                disableNavigation: true,
+                                splashIconSize: 150,
+                                backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+                                splash:
+                                loi.Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+                                animationDuration: const Duration(seconds: 1),
+                                nextScreen: NavigationBarController());
+                              },
+                           );
+                        for(int i = 0; i < provider.cartItems.length; i++){
+                          await provider.getCartItemSubCategoryName(provider.cartItems[i]["Item Name"],i); 
+                          await provider.getCartItemIdInTopSelling(i);                         
+
+                        }
                         Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(SlideRightAnimationRoute(Page: NavigationBarController()));
+ 
                       }
                       else{
                         Fluttertoast.showToast(
@@ -132,7 +154,26 @@ class _CheckoutState extends State<Checkout> {
                           toastLength:Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM
                         );
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AnimatedSplashScreen(
+                                disableNavigation: true,
+                                splashIconSize: 150,
+                                backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+                                splash:
+                                loi.Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+                                animationDuration: const Duration(seconds: 1),
+                                nextScreen: NavigationBarController());
+                              },
+                           );
+                        for(int i = 0; i < provider.cartItems.length; i++){
+                          await provider.getCartItemSubCategoryName(provider.cartItems[i]["Item Name"],i); 
+                          await provider.getCartItemIdInTopSelling(i);                         
+
+                        }
                         Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(SlideRightAnimationRoute(Page: NavigationBarController()));
                         }
                         else{
                           Fluttertoast.showToast(
@@ -160,7 +201,26 @@ class _CheckoutState extends State<Checkout> {
                           toastLength:Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM
                         );
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AnimatedSplashScreen(
+                                disableNavigation: true,
+                                splashIconSize: 150,
+                                backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+                                splash:
+                                loi.Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+                                animationDuration: const Duration(seconds: 1),
+                                nextScreen: NavigationBarController());
+                              },
+                           );
+                        for(int i = 0; i < provider.cartItems.length; i++){
+                          await provider.getCartItemSubCategoryName(provider.cartItems[i]["Item Name"],i); 
+                          await provider.getCartItemIdInTopSelling(i);                         
+
+                        }
                         Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(SlideRightAnimationRoute(Page: NavigationBarController()));
                       }
                       else{
                         Fluttertoast.showToast(
@@ -180,7 +240,26 @@ class _CheckoutState extends State<Checkout> {
                           toastLength:Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM
                         );
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AnimatedSplashScreen(
+                                disableNavigation: true,
+                                splashIconSize: 150,
+                                backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+                                splash:
+                                loi.Lottie.asset("assets/lotties/1620-simple-dots-loading.json"),
+                                animationDuration: const Duration(seconds: 1),
+                                nextScreen: NavigationBarController());
+                              },
+                           );
+                        for(int i = 0; i < provider.cartItems.length; i++){
+                          await provider.getCartItemSubCategoryName(provider.cartItems[i]["Item Name"],i); 
+                          await provider.getCartItemIdInTopSelling(i);                         
+
+                        }
                         Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(SlideRightAnimationRoute(Page: NavigationBarController()));
                         }
                         else{
                           Fluttertoast.showToast(
@@ -290,7 +369,7 @@ class _CheckoutState extends State<Checkout> {
       else{
         return InkWell(
           onTap: () {
-            Navigator.of(context).push(SlideLeftAnimationRoute(Page: CreditCard()));
+            Navigator.of(context).push(SlideLeftAnimationRoute(Page: const CreditCard()));
           },
           child: SizedBox(
             height: 60,

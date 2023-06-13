@@ -81,7 +81,7 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
           builder: (context, snapshot) {
             if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
               return GridView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 physics: const BouncingScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,mainAxisExtent: 340),
 
@@ -232,16 +232,29 @@ class SubCategoryItemsState extends State<SubCategoryItems> {
                                     if(provider.items[index]["Discount"] == 0){
                                         provider.cartItems.add({
                                           "Item Name":provider.items[index]["Item Name"],
+                                          "Description":provider.items[index]["Description"],
+                                          "Item Images":provider.items[index]["Item Images"],
+                                          "Rates":provider.items[index]["Rates"],
+                                          "Sales":provider.items[index]["Sales"],
+                                          "Default Quantity":provider.items[index]["Default Quantity"],
+                                          "Discount":provider.items[index]["Discount"],
                                           "Image":provider.items[index]["Image"],
                                           "Selected Quantity":provider.defaultQuantity,
                                           "Price":provider.items[index]["Price"],
                                           "Default Price":provider.items[index]["Price"],
                                           "Total Quantity":provider.items[index]["Quantity"],
                                           });
+                                          
                                     }
                                     else{
                                       provider.cartItems.add({
                                         "Item Name":provider.items[index]["Item Name"],
+                                        "Description":provider.items[index]["Description"],
+                                        "Item Images":provider.items[index]["Item Images"],
+                                        "Rates":provider.items[index]["Rates"],
+                                        "Sales":provider.items[index]["Sales"],
+                                        "Default Quantity":provider.items[index]["Default Quantity"],
+                                        "Discount":provider.items[index]["Discount"],
                                         "Image":provider.items[index]["Image"],
                                         "Selected Quantity":provider.defaultQuantity,
                                         "Price":value,

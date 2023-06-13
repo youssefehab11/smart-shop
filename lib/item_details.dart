@@ -19,8 +19,6 @@ class itemDetailsState extends State<itemDetails> {
   var similarItemsLiked = [];
   int selectedPage = 0;
 
-  List bngrb = ['Galaxy Chocolate', 'Toast','Masala', ];
-
   void loadingItem() {
     showDialog(
       context: context,
@@ -173,7 +171,7 @@ class itemDetailsState extends State<itemDetails> {
           ),
           title:  Text(
             provider.itemName,
-            style: const TextStyle(color: Colors.white, fontSize: 25,fontFamily: "Poppins",fontWeight: FontWeight.bold),
+            style: const TextStyle(color: Colors.white,fontFamily: "Poppins",fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
         ),
@@ -370,6 +368,12 @@ class itemDetailsState extends State<itemDetails> {
                                         if(provider.itemDiscount == 0){
                                             provider.cartItems.add({
                                               "Item Name":provider.itemName,
+                                              "Description":provider.itemDescription,
+                                              "Item Images":provider.itemImages,
+                                              "Rates":provider.itemRates,
+                                              "Sales":provider.itemSales,
+                                              "Default Quantity":provider.itemDefaultQuantity,
+                                              "Discount":provider.itemDiscount,
                                               "Image":provider.itemImages[0],
                                               "Selected Quantity":selectedQuantity,
                                               "Price":provider.doubleItemPrice * selectedQuantity,
@@ -380,6 +384,12 @@ class itemDetailsState extends State<itemDetails> {
                                         else{
                                           provider.cartItems.add({
                                             "Item Name":provider.itemName,
+                                            "Description":provider.itemDescription,
+                                            "Item Images":provider.itemImages,
+                                            "Rates":provider.itemRates,
+                                            "Sales":provider.itemSales,
+                                            "Default Quantity":provider.itemDefaultQuantity,
+                                            "Discount":provider.itemDiscount,
                                             "Image":provider.itemImages[0],
                                             "Selected Quantity":selectedQuantity,
                                             "Price":provider.priceOfDiscount * selectedQuantity,
@@ -393,11 +403,17 @@ class itemDetailsState extends State<itemDetails> {
                                         provider.cartItems.removeAt(indexFound);
                                         provider.cartItems.insert(indexFound, {
                                           "Item Name":provider.itemName,
-                                            "Image":provider.itemImages[0],
-                                            "Selected Quantity":selectedQuantity,
-                                            "Price":provider.priceOfDiscount * selectedQuantity,
-                                            "Default Price":provider.priceOfDiscount,
-                                            "Total Quantity":provider.itemQuantity,
+                                          "Description":provider.itemDescription,
+                                          "Item Images":provider.itemImages,
+                                          "Rates":provider.itemRates,
+                                          "Sales":provider.itemSales,
+                                          "Default Quantity":provider.itemDefaultQuantity,
+                                          "Discount":provider.itemDiscount,
+                                          "Image":provider.itemImages[0],
+                                          "Selected Quantity":selectedQuantity,
+                                          "Price":provider.priceOfDiscount * selectedQuantity,
+                                          "Default Price":provider.priceOfDiscount,
+                                          "Total Quantity":provider.itemQuantity,
                                         });
                                       }
                                       Fluttertoast.showToast(
@@ -406,6 +422,7 @@ class itemDetailsState extends State<itemDetails> {
                                         toastLength:Toast.LENGTH_SHORT,
                                         gravity: ToastGravity.BOTTOM
                                         );
+                                        print(provider.cartItems);
                                 },
                                 customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                                 child: Row(

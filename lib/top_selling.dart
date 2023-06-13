@@ -1,7 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graduationproject/item_details.dart';
@@ -9,28 +8,28 @@ import 'package:graduationproject/provider_controller.dart';
 import 'package:graduationproject/transition_animation.dart';
 import 'package:lottie/lottie.dart';
 
-class RecommendedItems extends StatefulWidget{
+class TopSellingItems extends StatefulWidget{
   @override
-  State<RecommendedItems> createState() => _RecommendedItemsState();
+  State<TopSellingItems> createState() => _TopSellingItemsState();
 }
 
-class _RecommendedItemsState extends State<RecommendedItems> {
+class _TopSellingItemsState extends State<TopSellingItems> {
 
-  List recommendedItemsLiked = [];
-   Widget checkRecommendedIemsDiscount(int index,var snapshot){
-    if(snapshot.data!["Viewed Items"][index]["Discount"] == 0){
+  List topSellingItemsLiked = [];
+   Widget checkSimilarIemsDiscount(int index,var snapshot){
+    if(snapshot.data!.docs[index]["Discount"] == 0){
       return Row(
         children: [
           Padding(
             padding: const EdgeInsets.only(left:8.0,top: 5),
-            child: Text("${snapshot.data!["Viewed Items"][index]["Price"]} EGP",
+            child: Text("${snapshot.data!.docs[index]["Price"]} EGP",
             style: Theme.of(context).textTheme.headline4,),
             ),
         ],
       );
     }
     else{
-      double value = double.parse((snapshot.data!["Viewed Items"][index]["Price"]-(snapshot.data!["Viewed Items"][index]["Price"] * snapshot.data!["Viewed Items"][index]["Discount"]/100)).toStringAsFixed(2));
+      double value = double.parse((snapshot.data!.docs[index]["Price"]-(snapshot.data!.docs[index]["Price"] * snapshot.data!.docs[index]["Discount"]/100)).toStringAsFixed(2));
       return  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -38,7 +37,7 @@ class _RecommendedItemsState extends State<RecommendedItems> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 5),
-                child: Text("${snapshot.data!["Viewed Items"][index]["Price"]} EGP",
+                child: Text("${snapshot.data!.docs[index]["Price"]} EGP",
                 style: const TextStyle(fontFamily: "Lato",fontSize: 15,decoration: TextDecoration.lineThrough),),
               ),
             ],
@@ -61,15 +60,13 @@ class _RecommendedItemsState extends State<RecommendedItems> {
   Widget build(BuildContext context) {
 
     final provider = ProviderController.of(context);
-    var user = FirebaseAuth.instance.currentUser;
-    DocumentReference userref = FirebaseFirestore.instance.collection("users").doc(user!.uid);
-
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("TopSelling");
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: true,
           centerTitle: true,
           title: const Text(
-            "Recommended Items",
+            "Top Selling",
             style: TextStyle(color: Colors.white, fontSize: 25,fontFamily: "Poppins",fontWeight: FontWeight.bold),
           ),
         ),
@@ -79,17 +76,25 @@ class _RecommendedItemsState extends State<RecommendedItems> {
           builder: (context, snapshot) {
             if(snapshot.data == ConnectivityResult.wifi || snapshot.data == ConnectivityResult.mobile){
               return StreamBuilder(
-          stream: userref.snapshots(),
+          stream: collectionReference.snapshots(),
           builder: (context, snapshot) {
             if(snapshot.hasData){
               return GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,mainAxisExtent: 340,),
 
                             physics: const BouncingScrollPhysics(),
-                            itemCount: snapshot.data!["Viewed Items"].length,
+                            itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, index) {
-                            for(int i = 0;i<snapshot.data!["Viewed Items"].length;i++){
-                              recommendedItemsLiked.add(false);
+                            for(int i = 0;i<snapshot.data!.docs.length;i++){
+                              topSellingItemsLiked.add(false);
+                            }
+                            if(snapshot.data!.docs[index]["Sales"]/snapshot.data!.docs[index]["Default Quantity"]*100 < 65){
+                              provider.getTopSellingItemId(snapshot.data!.docs[index]["Item Name"]);
+                            }
+                            for(int i = index; i<snapshot.data!.docs.length-1;i++){
+                              if(snapshot.data!.docs[index]["Item Name"] == snapshot.data!.docs[i+1]["Item Name"]){
+                                provider.getTopSellingItemId(snapshot.data!.docs[index]["Item Name"]);
+                              }
                             }
                             return InkWell(
                               onTap: () async{
@@ -106,7 +111,7 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                             nextScreen: itemDetails());
                           },
                        );
-                       provider.itemName = snapshot.data!["Viewed Items"][index]["Item Name"];
+                       provider.itemName = snapshot.data!.docs[index]["Item Name"];
                                   await provider.getRecommendedSubCategoryName(provider.itemName);
                                   await provider.getRecommendedSubCategoryId(provider.recommendedSubCategoryName);
                                   await provider.getRecommendedItemId();
@@ -181,7 +186,7 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                                 decoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(20),
                                                     image: DecorationImage(
-                                                        image: AssetImage('assets/images/${snapshot.data!["Viewed Items"][index]["Image"]}'),
+                                                        image: AssetImage('assets/images/${snapshot.data!.docs[index]["Image"]}'),
                                                         fit: BoxFit.cover)),
                                               ),
                                             ],
@@ -189,8 +194,8 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                           Positioned(  
                                             child: Container(
                                               color: Theme.of(context).colorScheme.onSecondaryContainer,
-                                              child:snapshot.data!["Viewed Items"][index]["Discount"] > 0 ?  Text(
-                                                    " - ${snapshot.data!["Viewed Items"][index]["Discount"]}%",
+                                              child:snapshot.data!.docs[index]["Discount"] > 0 ?  Text(
+                                                    " - ${snapshot.data!.docs[index]["Discount"]}%",
                                                     style:Theme.of(context).textTheme.subtitle2 
                                                   ):Container()
                                             ),
@@ -203,7 +208,7 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                           Padding(
                                             padding: const EdgeInsets.only(right: 8),
                                             child: Text(
-                                                  snapshot.data!["Viewed Items"][index]["Quantity"] > 0?"":"Out of stock",
+                                                  snapshot.data!.docs[index]["Quantity"] > 0?"":"Out of stock",
                                                   style: const TextStyle(fontSize: 15.5,color: Color.fromRGBO(198, 48, 48, 1),),
                                                 ),
                                           ),
@@ -212,7 +217,7 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                       Padding(
                                         padding: const EdgeInsets.only( top:8,left: 5,right: 5),
                                         child: Text(
-                                                  snapshot.data!["Viewed Items"][index]["Description"],
+                                                  snapshot.data!.docs[index]["Description"],
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .headline3,
@@ -220,50 +225,50 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                                       overflow: TextOverflow.ellipsis,
                                                 ),
                                       ),
-                                      checkRecommendedIemsDiscount(index,snapshot),
+                                      checkSimilarIemsDiscount(index,snapshot),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                         Container(
-                                          color:snapshot.data!["Viewed Items"][index]["Quantity"] == 0 ? Colors.grey[350]:const Color.fromRGBO(198, 48, 48, 1),
+                                          color:snapshot.data!.docs[index]["Quantity"] == 0 ? Colors.grey[350]:const Color.fromRGBO(198, 48, 48, 1),
                                           width: 100,
                                           height: 35,
                                           child: Material(
                                             color: Colors.transparent,
-                                            child: InkWell(onTap: snapshot.data!["Viewed Items"][index]["Quantity"] == 0 ? null :() {
-                                            double value = double.parse((snapshot.data!["Viewed Items"][index]["Price"]-(snapshot.data!["Viewed Items"][index]["Price"] * snapshot.data!["Viewed Items"][index]["Discount"]/100)).toStringAsFixed(2));
-                                            bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == snapshot.data!["Viewed Items"][index]["Item Name"],);
+                                            child: InkWell(onTap: snapshot.data!.docs[index]["Quantity"] == 0 ? null :() {
+                                            double value = double.parse((snapshot.data!.docs[index]["Price"]-(snapshot.data!.docs[index]["Price"] * snapshot.data!.docs[index]["Discount"]/100)).toStringAsFixed(2));
+                                            bool foundInCart = provider.cartItems.any((element) => element["Item Name"] == snapshot.data!.docs[index]["Item Name"],);
                                         if(!foundInCart){
-                                          if(snapshot.data!["Viewed Items"][index]["Discount"] == 0){
+                                          if(snapshot.data!.docs[index]["Discount"] == 0){
                                               provider.cartItems.add({
-                                                "Item Name":snapshot.data!["Viewed Items"][index]["Item Name"],
-                                                "Description":snapshot.data!["Viewed Items"][index]["Description"],
-                                                "Item Images":snapshot.data!["Viewed Items"][index]["Item Images"],
-                                                "Rates":snapshot.data!["Viewed Items"][index]["Rates"],
-                                                "Sales":snapshot.data!["Viewed Items"][index]["Sales"],
-                                                "Default Quantity":snapshot.data!["Viewed Items"][index]["Default Quantity"],
-                                                "Discount":snapshot.data!["Viewed Items"][index]["Discount"],
-                                                "Image":snapshot.data!["Viewed Items"][index]["Image"],
+                                                "Item Name":snapshot.data!.docs[index]["Item Name"],
+                                                "Description":snapshot.data!.docs[index]["Description"],
+                                                "Item Images":snapshot.data!.docs[index]["Item Images"],
+                                                "Rates":snapshot.data!.docs[index]["Rates"],
+                                                "Sales":snapshot.data!.docs[index]["Sales"],
+                                                "Default Quantity":snapshot.data!.docs[index]["Default Quantity"],
+                                                "Discount":snapshot.data!.docs[index]["Discount"],
+                                                "Image":snapshot.data!.docs[index]["Image"],
                                                 "Selected Quantity":provider.defaultQuantity,
-                                                "Price":snapshot.data!["Viewed Items"][index]["Price"],
-                                                "Default Price":snapshot.data!["Viewed Items"][index]["Price"],
-                                                "Total Quantity":snapshot.data!["Viewed Items"][index]["Quantity"],
+                                                "Price":snapshot.data!.docs[index]["Price"],
+                                                "Default Price":snapshot.data!.docs[index]["Price"],
+                                                "Total Quantity":snapshot.data!.docs[index]["Quantity"],
                                                 });
                                           }
                                           else{
                                             provider.cartItems.add({
-                                              "Item Name":snapshot.data!["Viewed Items"][index]["Item Name"],
-                                              "Description":snapshot.data!["Viewed Items"][index]["Description"],
-                                              "Item Images":snapshot.data!["Viewed Items"][index]["Item Images"],
-                                              "Rates":snapshot.data!["Viewed Items"][index]["Rates"],
-                                              "Sales":snapshot.data!["Viewed Items"][index]["Sales"],
-                                              "Default Quantity":snapshot.data!["Viewed Items"][index]["Default Quantity"],
-                                              "Discount":snapshot.data!["Viewed Items"][index]["Discount"],
-                                              "Image":snapshot.data!["Viewed Items"][index]["Image"],
+                                              "Item Name":snapshot.data!.docs[index]["Item Name"],
+                                              "Description":snapshot.data!.docs[index]["Description"],
+                                              "Item Images":snapshot.data!.docs[index]["Item Images"],
+                                              "Rates":snapshot.data!.docs[index]["Rates"],
+                                              "Sales":snapshot.data!.docs[index]["Sales"],
+                                              "Default Quantity":snapshot.data!.docs[index]["Default Quantity"],
+                                              "Discount":snapshot.data!.docs[index]["Discount"],
+                                              "Image":snapshot.data!.docs[index]["Image"],
                                               "Selected Quantity":provider.defaultQuantity,
                                               "Price":value,
                                               "Default Price":value,
-                                              "Total Quantity":snapshot.data!["Viewed Items"][index]["Quantity"],
+                                              "Total Quantity":snapshot.data!.docs[index]["Quantity"],
                                             });
                                             }
                                         }
@@ -274,7 +279,7 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                               gravity: ToastGravity.BOTTOM
                                               );
                                             },
-                                            child:Center(child: snapshot.data!["Viewed Items"][index]["Quantity"] == 0 ? 
+                                            child:Center(child: snapshot.data!.docs[index]["Quantity"] == 0 ? 
                                             Text("Sold out",style: TextStyle(color: Colors.white,fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*6),)
                                             :Text("Add to cart",style: TextStyle(color: Colors.white,fontFamily: "Lato",fontSize: MediaQuery.of(context).devicePixelRatio*5.6),)
                                             ),
@@ -283,10 +288,10 @@ class _RecommendedItemsState extends State<RecommendedItems> {
                                         ),
                                         IconButton(onPressed: (() {
                                           setState(() {
-                                            recommendedItemsLiked[index] = !recommendedItemsLiked[index];
+                                            topSellingItemsLiked[index] = !topSellingItemsLiked[index];
                                           });
                                         })
-                                        , icon:Icon(recommendedItemsLiked[index] == false? Icons.favorite_border_outlined:Icons.favorite,color: const Color.fromRGBO(198, 48, 48, 1),size: 30,) )
+                                        , icon:Icon(topSellingItemsLiked[index] == false? Icons.favorite_border_outlined:Icons.favorite,color: const Color.fromRGBO(198, 48, 48, 1),size: 30,) )
                                         ],)  
                                       ]
                               ),
@@ -295,7 +300,7 @@ class _RecommendedItemsState extends State<RecommendedItems> {
               );
             }
             else{
-              return const CircularProgressIndicator();
+              return const Center(child:CircularProgressIndicator(color:Color.fromRGBO(198, 48, 48, 1)));
             }
             
           },

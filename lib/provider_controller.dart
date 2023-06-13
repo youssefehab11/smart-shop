@@ -17,7 +17,7 @@ class ProviderController extends ChangeNotifier{
   List<String> _savedItemsImages = [];
   List<String> get savedItemsImages => _savedItemsImages; 
   var counter;
-  var budget = '0' ;
+  var budget = 0.0 ;
   String subCategoryTitle = "";
   String subCategoryId = "";
   String category = "";
@@ -42,6 +42,8 @@ class ProviderController extends ChangeNotifier{
   int numberOfItemImages = 0;
   int itemDiscount = 0;
   double priceOfDiscount = 0.00;
+  int itemDefaultQuantity = 0;
+  int itemSales = 0;
 
   int defaultQuantity = 1;
   int numberOfCartItems = 0;
@@ -79,6 +81,19 @@ class ProviderController extends ChangeNotifier{
   String recommendedItemId = "";
 
   var connectivtyResult;
+
+  String subCategoryNameForBudgetRecommendation = "";
+  List budgetRecommendation = [];
+
+  String topSellingItemId = "";
+
+  String cartItemSubCategoryName = "";
+  String cartItemSubCategoryId = "";
+  String cartItemId = "";
+  String cartItemIdInTopSelling = "";
+  List updateSalesViewedList = []; 
+
+  List recommendedForYou =[];
   
 
   void makeListItemName(List checked,List subCategory){
@@ -111,9 +126,9 @@ class ProviderController extends ChangeNotifier{
     _savedItemsNames.clear();
     notifyListeners();
   }
-  saveValue(String value){
-    if(value == ''){
-      budget = '0';
+  saveValue(double value){
+    if(value == 0){
+      budget = 0;
     }
     else{
       budget = value;
@@ -152,6 +167,8 @@ class ProviderController extends ChangeNotifier{
       itemName = value.get("Item Name");
       itemDescription = value.get("Description").toString();
       stringItemPrice = value.get("Price").toString();
+      itemSales = value.get("Sales");
+      itemDefaultQuantity = value.get("Default Quantity");
       itemQuantity = value.get("Quantity");
       itemImages = value.get("Item Images");
       numberOfItemImages = itemImages.length;
@@ -319,6 +336,134 @@ class ProviderController extends ChangeNotifier{
   }
   checkConnectivity()async{
     connectivtyResult = await Connectivity().checkConnectivity(); 
+  }
+
+  getSubCategoryNameForBudgetRecommendation(String name)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("SearchList");
+    await collectionReference.where("ProductName",isEqualTo: name).get().then((value){
+       for (var element in value.docs) {
+        subCategoryNameForBudgetRecommendation = element["SubCategoryName"];
+       }
+    });
+  }
+  getSubCategoryIdForBudgetRecommenadtion(String subCategory)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList");
+    await collectionReference.where("SubCategory",isEqualTo: subCategory).get().then((value) {
+      for (var element in value.docs) {
+          subCategoryId = element.id;
+      }
+    });
+  }
+  getTopSellingItemId(String name)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("TopSelling");
+    await collectionReference.where("Item Name",isEqualTo: name).get().then((value) {
+      for (var element in value.docs) {
+          topSellingItemId = element.id;
+      }
+    });
+    collectionReference.doc(topSellingItemId).delete();
+  }
+
+  getCartItemSubCategoryName(String name ,int i)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("SearchList");
+    await collectionReference.where("ProductName",isEqualTo: name).get().then((value) {
+      for (var element in value.docs) {
+          cartItemSubCategoryName = element["SubCategoryName"];
+      }
+    });
+    print(cartItemSubCategoryName);
+    getCartItemSubCategoryId(cartItemSubCategoryName,i);
+  }
+
+  getCartItemSubCategoryId(String name, int i)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList");
+    await collectionReference.where("SubCategory",isEqualTo: name).get().then((value) {
+      for (var element in value.docs) {
+          cartItemSubCategoryId = element.id;
+      }
+    });
+    print(cartItemSubCategoryId);
+    getCartItemId(i);
+  }
+
+  getCartItemId(int i)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList").doc(cartItemSubCategoryId).collection("Items");
+    await collectionReference.where("Item Name",isEqualTo: cartItems[i]["Item Name"]).get().then((value) {
+      for (var element in value.docs) {
+          cartItemId = element.id;
+      }
+    });
+    print(cartItemId);
+    updateSales(i);
+  }
+
+  updateSales(int i)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("ProductsList");
+    DocumentReference documentReference = FirebaseFirestore.instance.collection("TopSelling").doc();
+    var user = FirebaseAuth.instance.currentUser;
+    DocumentReference userref = FirebaseFirestore.instance.collection("users").doc(user!.uid);
+    await collectionReference.doc(cartItemSubCategoryId).collection("Items").doc(cartItemId).update({
+      "Sales": cartItems[i]["Sales"] + cartItems[i]["Selected Quantity"],
+      "Quantity": cartItems[i]["Total Quantity"] - cartItems[i]["Selected Quantity"],
+    });
+
+    //if(cartItems[i]["Sales"])
+
+    //cartItems[i]["Sales"] = cartItems[i]["Sales"] + cartItems[i]["Selected Quantity"];
+    //cartItems[i]["Total Quantity"] = cartItems[i]["Total Quantity"] - cartItems[i]["Selected Quantity"];
+    updateSalesViewedList = await userref.get().then((value) => value.get("Viewed Items"));
+    for(int j = 0; j < updateSalesViewedList.length; j++){
+      if(updateSalesViewedList[j]["Item Name"] == cartItems[i]["Item Name"]){
+        updateSalesViewedList[j]["Sales"] = cartItems[i]["Sales"] + cartItems[i]["Selected Quantity"];
+        updateSalesViewedList[j]["Quantity"] = cartItems[i]["Total Quantity"] - cartItems[i]["Selected Quantity"];
+        await userref.update ({"Viewed Items": updateSalesViewedList
+        });
+      }
+    }
+    
+     if((cartItems[i]["Sales"]+ cartItems[i]["Selected Quantity"])/cartItems[i]["Default Quantity"]*100 > 65){
+      await documentReference.set({
+        "Item Name":cartItems[i]["Item Name"],
+        "Description":cartItems[i]["Description"],
+        "Item Images":cartItems[i]["Item Images"],
+        "Rates":cartItems[i]["Rates"],
+        "Sales":cartItems[i]["Sales"]+cartItems[i]["Selected Quantity"],
+        "Default Quantity":cartItems[i]["Default Quantity"],
+        "Discount":cartItems[i]["Discount"],
+        "Image":cartItems[i]["Image"],
+        "Price":cartItems[i]["Price"]/cartItems[i]["Selected Quantity"],
+        "Quantity":cartItems[i]["Total Quantity"]-cartItems[i]["Selected Quantity"],
+      });
+      print("done");
+    } 
+    if(i+1 == cartItems.length){
+      cartItems.clear();                    
+    }
+    
+  }
+  getCartItemIdInTopSelling(int i)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("TopSelling");
+    await collectionReference.where("Item Name",isEqualTo: cartItems[i]["Item Name"]).get().then((value) {
+      for (var element in value.docs) {
+          cartItemIdInTopSelling = element.id;
+      }
+    });
+    print(cartItemIdInTopSelling);
+    if(cartItemIdInTopSelling != ""){
+      updateSalesInTopSelling(i);
+    }
+  }
+  updateSalesInTopSelling(int i)async{
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection("TopSelling");
+    await collectionReference.doc(cartItemIdInTopSelling).update({
+      "Sales": cartItems[i]["Sales"] + cartItems[i]["Selected Quantity"],
+      "Quantity": cartItems[i]["Total Quantity"] - cartItems[i]["Selected Quantity"],});
+  }
+
+  checkRecommendedForYouAvailability()async{
+    var user = FirebaseAuth.instance.currentUser;
+    DocumentReference userref = FirebaseFirestore.instance.collection("users").doc(user!.uid);
+    recommendedForYou = await userref.get().then((value) => value.get("Viewed Items"));
   }
 
 
